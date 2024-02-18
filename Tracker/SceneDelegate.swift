@@ -1,10 +1,3 @@
-//
-//  SceneDelegate.swift
-//  Tracker
-//
-//  Created by Пользователь on 11.02.2024.
-//
-
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -15,7 +8,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         self.window = UIWindow(windowScene: scene)
 //        self.window?.rootViewController = LaunchScreenViewController()
-        self.window?.rootViewController = TrackersScreenViewController()
+        self.window?.rootViewController = TabBarController()
         self.window?.makeKeyAndVisible()
     }
 

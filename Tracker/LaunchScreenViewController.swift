@@ -18,7 +18,7 @@ final class LaunchScreenViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setLaunchScreenImage()
-        view.backgroundColor = .Blue
+        view.backgroundColor = .Red
     }
     
     //MARK: - Private Functions
