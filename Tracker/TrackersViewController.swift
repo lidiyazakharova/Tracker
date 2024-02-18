@@ -75,11 +75,14 @@ final class TrackersViewController: UIViewController {
     
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
-//        searchBar.barStyle = .default
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        searchBar.backgroundImage = UIImage()
 //        searchBar.backgroundColor = .Red
         searchBar.placeholder = "Поиск"
+        let textInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
+        textInsideSearchBar?.textColor = .Black
+//        textInsideSearchBar?.leftViewMode = UITextField.ViewMode.never
         return searchBar
     }()
 
@@ -133,9 +136,9 @@ final class TrackersViewController: UIViewController {
     private func setSearchBar() {
         view.addSubview(searchBar)
         NSLayoutConstraint.activate([
-            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 92),
-            searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
+            searchBar.topAnchor.constraint(equalTo: largeTitleLabel.bottomAnchor, constant: 7),
+            searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
+            searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8)
             
         ])
     }
