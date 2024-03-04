@@ -435,7 +435,7 @@ extension ListTrackersViewController: UICollectionViewDelegateFlowLayout {
 //    }
 //
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        UIEdgeInsets(top: 10, left: params.leftInset, bottom: 10, right: params.rightInset)//need check
+        UIEdgeInsets(top: 0, left: params.leftInset, bottom: 0, right: params.rightInset)//need check
     }
 }
 
