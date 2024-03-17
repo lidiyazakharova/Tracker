@@ -5,7 +5,7 @@ struct Tracker {
     let title: String
     let color: UIColor
     let emoji: String
-    let schedule: [Weekday] //[WeakDay]?
+    let schedule: [Weekday] 
 }
 
 struct TrackerCategory {
@@ -18,12 +18,12 @@ struct TrackerRecord {
     let date: Date
 }
 
-enum Weekday {
-    case monday
-    case tuesday
-    case wednesday
-    case thursday
-    case friday
-    case saturday
-    case sunday
+enum Weekday: String {
+    case monday = "Понедельник"
+    case tuesday = "Вторник"
+    case wednesday = "Среда"
+    case thursday = "Четверг"
+    case friday = "Пятницa"
+    case saturday = "Суббота"
+    case sunday = "Воскресенье"
 }

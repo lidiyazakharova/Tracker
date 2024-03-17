@@ -8,7 +8,7 @@ protocol TrackerCellDelegate: AnyObject {
 final class TrackerCell: UICollectionViewCell {
     static let identifier = "taskCellIdentifier"
     
-    //MARK:- Properties
+    //MARK: - Properties
     private let mainView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16
@@ -18,7 +18,7 @@ final class TrackerCell: UICollectionViewCell {
     
     private let emojiLabel: UILabel = {
         let label = UILabel()
-        label.backgroundColor = .White.withAlphaComponent(0.3) //need check
+        label.backgroundColor = .White.withAlphaComponent(0.3)
         label.clipsToBounds = true
         label.layer.cornerRadius = 24 / 2
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -29,7 +29,7 @@ final class TrackerCell: UICollectionViewCell {
     
     private let taskTitleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .White //need check
+        label.textColor = .White
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -42,6 +42,7 @@ final class TrackerCell: UICollectionViewCell {
         stack.distribution = .fill
         stack.spacing = 0
         stack.translatesAutoresizingMaskIntoConstraints = false
+//        stack.backgroundColor = .Red
         return stack
     }()
     
@@ -55,13 +56,15 @@ final class TrackerCell: UICollectionViewCell {
     
     private lazy var plusButton: UIButton = {
         let button = UIButton(type: .system)
-        let pointSize = UIImage.SymbolConfiguration(pointSize: 11)
-        let image = UIImage(systemName: "Plus", withConfiguration: pointSize)
-        button.tintColor = .Red
-        button.setImage(image, for: .normal)
+//        let pointSize = UIImage.SymbolConfiguration(pointSize: 11)
+//        let image = UIImage(systemName: "Plus", withConfiguration: pointSize)
+//        button.tintColor = .Red
+//        button.setImage(image, for: .normal)
+//        button.setImage(UIImage(named: "Plus"), for: .normal)
+        button.tintColor = .White
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 34 / 2
-        button.addTarget(self, action: #selector(trackButtonTapped), for: .touchUpInside)
+        button.addTarget(TrackerCell.self, action: #selector(trackButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -86,14 +89,15 @@ final class TrackerCell: UICollectionViewCell {
         setupConstraints()
         
         mainView.backgroundColor = color
-        plusButton.backgroundColor = color
+        plusButton.tintColor = color
         taskTitleLabel.text = tracker.title
         emojiLabel.text = tracker.emoji
         
         let wordDay = pluralizeDays(completedDays) //need check
         counterDayLabel.text = "\(wordDay)"
         
-        let image = isCompletedToday ? doneImage : plusImage
+//        let image = isCompletedToday ? doneImage : plusImage
+        let image = isCompletedToday ? UIImage(named: "Done") : UIImage(named: "Plus")
         plusButton.setImage(image, for: .normal)
     }
     
@@ -120,22 +124,26 @@ final class TrackerCell: UICollectionViewCell {
             emojiLabel.widthAnchor.constraint(equalToConstant: 24),
             emojiLabel.heightAnchor.constraint(equalToConstant: 24),
             
-            taskTitleLabel.leadingAnchor.constraint(equalTo: emojiLabel.leadingAnchor),
+            taskTitleLabel.leadingAnchor.constraint(equalTo: emojiLabel.leadingAnchor, constant: 12),
             taskTitleLabel.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -12),
             taskTitleLabel.bottomAnchor.constraint(equalTo: mainView.bottomAnchor, constant: -12),
             
             plusButton.widthAnchor.constraint(equalToConstant: 34),
             plusButton.heightAnchor.constraint(equalToConstant: 34),
-            plusButton.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
-            plusButton.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 121),
+            plusButton.topAnchor.constraint(equalTo: stackView.topAnchor, constant: 8),
+            plusButton.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -12),
+//            plusButton.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 121),
+//
+            counterDayLabel.topAnchor.constraint(equalTo: stackView.topAnchor, constant: 16),
+            counterDayLabel.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 12),
             
-            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12), //need check
-            stackView.topAnchor.constraint(equalTo: mainView.bottomAnchor, constant: 8),
-            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12)
-            
-//            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12), //need check
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor), //need check
 //            stackView.topAnchor.constraint(equalTo: mainView.bottomAnchor, constant: 8),
-//            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12)
+            stackView.topAnchor.constraint(equalTo: mainView.bottomAnchor),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            stackView.heightAnchor.constraint(equalToConstant: 58)
+        
+            
         ])
     }
     
@@ -151,12 +159,12 @@ final class TrackerCell: UICollectionViewCell {
             return "\(count) дней"
         }
     }
-    private let doneImage = UIImage(systemName: "Done")
-    private let plusImage: UIImage = {
-        let pointSize = UIImage.SymbolConfiguration(pointSize:11)
-        let image = UIImage(systemName: "Plus", withConfiguration: pointSize) ?? UIImage()
-        return image
-    }()
+//    private let doneImage = UIImage(systemName: "Done")
+//    private let plusImage: UIImage = {
+//        let pointSize = UIImage.SymbolConfiguration(pointSize:11)
+//        let image = UIImage(systemName: "Plus", withConfiguration: pointSize) ?? UIImage()
+//        return image
+//    }()
     
     @objc private func trackButtonTapped() {
         //cell delegate

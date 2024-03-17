@@ -1,7 +1,6 @@
 import UIKit
 
 final class PlaceholderView: UIView {
-    let placeHolderView = UIView()
     
     private lazy var emptyTrackersImage: UIImageView = {
         let emptyTrackersImage = UIImageView()
@@ -25,16 +24,19 @@ final class PlaceholderView: UIView {
     }()
     
     func configure() {
+
         addSubview(questionLabel)
         addSubview(emptyTrackersImage)
+        translatesAutoresizingMaskIntoConstraints = false
         
+
         NSLayoutConstraint.activate([
             questionLabel.topAnchor.constraint(equalTo: emptyTrackersImage.bottomAnchor, constant: 8),
-            questionLabel.leadingAnchor.constraint(equalTo: placeHolderView.leadingAnchor),
-            questionLabel.trailingAnchor.constraint(equalTo: placeHolderView.trailingAnchor),
-            
-            emptyTrackersImage.centerYAnchor.constraint(equalTo: placeHolderView.centerYAnchor),
-            emptyTrackersImage.centerXAnchor.constraint(equalTo: placeHolderView.centerXAnchor)
+            questionLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            questionLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+
+            emptyTrackersImage.centerYAnchor.constraint(equalTo: centerYAnchor),
+            emptyTrackersImage.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
     }
     
