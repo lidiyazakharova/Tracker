@@ -1,5 +1,7 @@
 import UIKit
 
+//TO DO починить логику
+
 protocol TrackersViewControllerDelegate: AnyObject {
     func createdTracker(tracker: Tracker, categoryTitle: String)
 }
@@ -143,7 +145,7 @@ final class TrackersViewController: UIViewController {
         setupConstraints()
         configureCollectionView()
         placeholderView.configure()
-//        updateDataLabelTitle(with: Date())
+        updateDataLabelTitle(with: Date())
     }
     
 
@@ -157,7 +159,7 @@ final class TrackersViewController: UIViewController {
     
     private func reloadData() {
         categories = dataManager.categories
-//        filteredCategories = categories
+        filteredCategories = categories
         dateChanged()
     }
     
@@ -256,7 +258,7 @@ final class TrackersViewController: UIViewController {
     
     @objc private func addTask() {
         let createTrackerVC = AddTrackerViewController()
-//        createTrackerVC.updateDelegate = self
+        createTrackerVC.updateDelegate = self
         
         let navVC = UINavigationController(rootViewController: createTrackerVC)
         present(navVC, animated: true)
@@ -273,8 +275,8 @@ final class TrackersViewController: UIViewController {
     
     private func reloadFilteredCategories(text: String?, date: Date) {
         let calendar = Calendar.current
-//        let filteredWeekDay = calendar.component(.weekday, from: datePicker.date)
-//        let filterText = (searchTextField.text ?? "").lowercased()
+        let filteredWeekday = calendar.component(.weekday, from: datePicker.date)
+        let filterText = (searchTextField.text ?? "").lowercased()
             let filteredWeekDay = calendar.component(.weekday, from: date)
             let filterText = (text ?? "").lowercased()
         
@@ -283,9 +285,9 @@ final class TrackersViewController: UIViewController {
           let trackers = category.trackers.filter { tracker in
               let textCondition = filterText.isEmpty ||
               tracker.title.lowercased().contains(filterText)
-//              let dateCondition = tracker.schedule?.contains { weekDay in
-//                        weekDay.numberValue == filteredWeekDay
-//                    } == true
+              let dateCondition = tracker.schedule?.contains { weekDay in
+                        weekDay.numberValue == filteredWeekDay
+                    } == true
               return textCondition //&& dateCondition
                 }
             
@@ -312,7 +314,7 @@ extension TrackersViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-//        reloadFilteredCategories()
+        reloadFilteredCategories()
         return true
     }
     
@@ -389,8 +391,8 @@ extension TrackersViewController: TrackerCellDelegate {
     func uncompletedTracker(id: UUID, at indexPath: IndexPath) {
         completedTrackers.removeAll { trackerRecord in
             isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
-//            let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: datePicker.date)
-//            return trackerRecord.trackerID == id && isSameDay
+            let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: datePicker.date)
+            return trackerRecord.trackerID == id && isSameDay
         }
             collectionView.reloadItems(at: [indexPath])
     }
@@ -400,14 +402,14 @@ extension TrackersViewController: TrackerCellDelegate {
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        let size = CGSize(width: collectionView.frame.width, height: 49)
+        let size = CGSize(width: collectionView.frame.width, height: 46)
         return size
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let availableWidth = collectionView.frame.width - params.paddingWidth
         let cellWidth = availableWidth / CGFloat(params.cellCount)
-        return CGSize(width: cellWidth, height: cellWidth * 2 / 3) //need check
+        return CGSize(width: cellWidth, height: CGFloat(148)) //need check
     }
     
     func collectionView(
@@ -418,10 +420,6 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         return CGFloat(params.cellSpacing)
     }
     
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-//        10
-//    }
-//
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         UIEdgeInsets(top: 0, left: params.leftInset, bottom: 0, right: params.rightInset)//need check
     }
@@ -430,53 +428,53 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: - TrackersViewControllerDelegate
 
-//extension ListTrackersViewController: ListTrackersViewControllerDelegate {
-//    func createdTracker(tracker: Tracker, categoryTitle: String) {
-//        do {
-//            try trackerStore.addTracker(tracker, toCategory: TrackerCategory(categoryTitle: categoryTitle, trackers: []))
-//            categories.append(TrackerCategory(categoryTitle: categoryTitle, trackers: [tracker]))
-//            filterVisibleCategories(for: currentDate)
-//            collectionView.reloadData()
-//            reloadData()
-//        } catch {
-//            print("Failed to add tracker to Core Data: \(error)")
-//        }
-//    }
-//}
+extension TrackersViewController: TrackersViewControllerDelegate {
+    func createdTracker(tracker: Tracker, categoryTitle: String) {
+        do {
+            try trackerStore.addTracker(tracker, toCategory: TrackerCategory(categoryTitle: categoryTitle, trackers: []))
+            categories.append(TrackerCategory(categoryTitle: categoryTitle, trackers: [tracker]))
+            filterVisibleCategories(for: currentDate)
+            collectionView.reloadData()
+            reloadData()
+        } catch {
+            print("Failed to add tracker to Core Data: \(error)")
+        }
+    }
+}
 
 // MARK: - UITextFieldDelegate
-//
-//extension TrackersViewController: UISearchTextFieldDelegate {
-//    private func textFieldShouldReturn(_ textField: UISearchTextField) -> Bool {
-//        textField.resignFirstResponder()
-//        hideNoResultsImage()
-//        return true
-//    }
-//}
+
+extension TrackersViewController: UISearchTextFieldDelegate {
+    private func textFieldShouldReturn(_ textField: UISearchTextField) -> Bool {
+        textField.resignFirstResponder()
+        hideNoResultsImage()
+        return true
+    }
+}
 
 
 
 
 
 // MARK: - TrackerCollectionViewCellDelegate
-//
-//extension ListTrackersViewController: TrackerCollectionViewCellDelegate {
-//    func competeTracker(id: UUID) {
-//        guard currentDate <= Date() else {
-//            return
-//        }
-//        completedTrackers.append(TrackerRecord(trackerID: id, date: currentDate))
-//        collectionView.reloadData()
-//    }
-//
-//    func uncompleteTracker(id: UUID) {
-//        completedTrackers.removeAll { element in
-//            if (element.trackerID == id &&  Calendar.current.isDate(element.date, equalTo: currentDate, toGranularity: .day)) {
-//                return true
-//            } else {
-//                return false
-//            }
-//        }
-//        collectionView.reloadData()
-//    }
-//}
+
+extension TrackersViewController: TrackerCollectionViewCellDelegate {
+    func competeTracker(id: UUID) {
+        guard currentDate <= Date() else {
+            return
+        }
+        completedTrackers.append(TrackerRecord(trackerID: id, date: currentDate))
+        collectionView.reloadData()
+    }
+
+    func uncompleteTracker(id: UUID) {
+        completedTrackers.removeAll { element in
+            if (element.trackerID == id &&  Calendar.current.isDate(element.date, equalTo: currentDate, toGranularity: .day)) {
+                return true
+            } else {
+                return false
+            }
+        }
+        collectionView.reloadData()
+    }
+}

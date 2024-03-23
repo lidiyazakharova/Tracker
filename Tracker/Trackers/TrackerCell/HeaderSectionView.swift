@@ -16,8 +16,7 @@ class HeaderSectionView: UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-//        backgroundColor = .green
-//    
+//        backgroundColor = .green // NEED DELETE
         addSubview(titleLabel)
     
         NSLayoutConstraint.activate([

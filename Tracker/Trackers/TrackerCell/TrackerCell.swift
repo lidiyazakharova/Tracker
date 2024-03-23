@@ -42,7 +42,7 @@ final class TrackerCell: UICollectionViewCell {
         stack.distribution = .fill
         stack.spacing = 0
         stack.translatesAutoresizingMaskIntoConstraints = false
-//        stack.backgroundColor = .Red
+//        stack.backgroundColor = .Red // NEED DELETE
         return stack
     }()
     
@@ -89,7 +89,6 @@ final class TrackerCell: UICollectionViewCell {
         setupConstraints()
         
         mainView.backgroundColor = color
-        plusButton.tintColor = color
         taskTitleLabel.text = tracker.title
         emojiLabel.text = tracker.emoji
         
@@ -98,6 +97,8 @@ final class TrackerCell: UICollectionViewCell {
         
 //        let image = isCompletedToday ? doneImage : plusImage
         let image = isCompletedToday ? UIImage(named: "Done") : UIImage(named: "Plus")
+        plusButton.tintColor = color
+        plusButton.alpha = isCompletedToday ? 0.3 : 1
         plusButton.setImage(image, for: .normal)
     }
     
@@ -124,7 +125,7 @@ final class TrackerCell: UICollectionViewCell {
             emojiLabel.widthAnchor.constraint(equalToConstant: 24),
             emojiLabel.heightAnchor.constraint(equalToConstant: 24),
             
-            taskTitleLabel.leadingAnchor.constraint(equalTo: emojiLabel.leadingAnchor, constant: 12),
+            taskTitleLabel.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 12),
             taskTitleLabel.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -12),
             taskTitleLabel.bottomAnchor.constraint(equalTo: mainView.bottomAnchor, constant: -12),
             

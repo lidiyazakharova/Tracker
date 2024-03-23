@@ -16,7 +16,7 @@ class DataManager {
                         ),
                         Tracker(
                             id: UUID(),
-                            title: "Выполнить 3 задачи",
+                            title: "Выполнить 3 задачи из практикума",
                             color: . purple,
                             emoji: "👩‍💻",
                             schedule: [Weekday.tuesday, Weekday.friday]
@@ -41,8 +41,34 @@ class DataManager {
                             schedule: [Weekday.saturday, Weekday.friday]
                         ),
                     ]
-                )
+                ),
     
+        TrackerCategory(title: "Уборка",
+                    trackers: [
+                        Tracker(
+                            id: UUID(),
+                            title: "Помыть посуду",
+                            color: .magenta,
+                            emoji: "🍴",
+                            schedule: [Weekday.thursday, Weekday.saturday]
+                        ),
+                        Tracker(
+                            id: UUID(),
+                            title: "Вынести мусор",
+                            color: .yellow,
+                            emoji: "🗑",
+                            schedule: [Weekday.sunday, Weekday.friday, Weekday.tuesday]
+                        ),
+                        Tracker(
+                            id: UUID(),
+                            title: "Постирать",
+                            color: .blue,
+                            emoji: "👕",
+                            schedule: [Weekday.saturday]
+                        )
+                    ]
+                )
+        
     ]
     
     private init() {}

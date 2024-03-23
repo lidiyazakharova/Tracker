@@ -68,7 +68,7 @@ final class AddTrackerViewController: UIViewController {
      //MARK: - Actions
    
        @objc private func habitButtonClicked() {
-           let configureTrackerViewController = ConfigureTrackerViewController()
+           let configureTrackerViewController = ScheduleViewController()
 //           configureTrackerViewController.delegate = self
            let navigationController = UINavigationController(rootViewController: configureTrackerViewController)
            present(navigationController, animated: true)
