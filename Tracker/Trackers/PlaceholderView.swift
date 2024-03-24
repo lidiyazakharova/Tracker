@@ -2,6 +2,8 @@ import UIKit
 
 final class PlaceholderView: UIView {
     
+    
+    //MARK: - Private Properties
     private lazy var emptyTrackersImage: UIImageView = {
         let emptyTrackersImage = UIImageView()
         emptyTrackersImage.image = UIImage(named: "EmptyTrackerIcon")
@@ -22,8 +24,9 @@ final class PlaceholderView: UIView {
        questionLabel.textAlignment = NSTextAlignment.center
        return questionLabel
     }()
-    
-    func configure() {
+
+    //MARK: - Functions
+    func configureEmptyTrackerPlaceholder() {
 
         addSubview(questionLabel)
         addSubview(emptyTrackersImage)
@@ -39,5 +42,4 @@ final class PlaceholderView: UIView {
             emptyTrackersImage.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
     }
-    
 }

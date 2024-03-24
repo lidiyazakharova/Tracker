@@ -2,14 +2,14 @@ import UIKit
 
 final class ActivityTableCell: UITableViewCell {
     
+    // MARK: - Properties
     static let reuseIdentifier = "ActivityTableCell"
-    
-    // MARK: - Private Properties
-    
+   
+        
     let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 17)
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         label.numberOfLines = 0
         return label
     }()
@@ -17,12 +17,12 @@ final class ActivityTableCell: UITableViewCell {
     private let subtitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 17)
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         label.numberOfLines = 0
         return label
     }()
     
-    // MARK: - Initializers
+    // MARK: - Init
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -39,7 +39,7 @@ final class ActivityTableCell: UITableViewCell {
         if let subText = subText {
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 2
-            let subTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.gray]
+            let subTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.Gray]
             let subAttributedString = NSMutableAttributedString(string: subText, attributes: subTextAttributes)
             subAttributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: subAttributedString.length))
             

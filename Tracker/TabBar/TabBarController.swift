@@ -2,18 +2,18 @@ import UIKit
 
 final class TabBarController: UITabBarController {
     
-    
-    
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        addSeparatop()
+        addSeparator()
         generateTabBar()
     }
     
-    private func addSeparatop() {
-    let separator = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 1))
-    separator.backgroundColor = .Gray
-    tabBar.addSubview(separator)
+    //MARK: - Private Functions
+    private func addSeparator() {
+        let separator = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 1))
+        separator.backgroundColor = .Gray
+        tabBar.addSubview(separator)
     }
     
     private func generateTabBar() {

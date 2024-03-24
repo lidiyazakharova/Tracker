@@ -14,7 +14,7 @@ final class ScheduleCell: UITableViewCell {
         return label
     }()
     
-    // MARK: - Initializers
+    // MARK: - Init
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -25,7 +25,7 @@ final class ScheduleCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Private Methods
+    // MARK: - Private Functions
     
     private func setupViews() {
         contentView.addSubview(cellLabel)

@@ -6,7 +6,7 @@ protocol CreatingTrackerViewControllerDelegate: AnyObject {
 }
 
 final class AddTrackerViewController: UIViewController {
-    
+    var screenTitle: String = ""
 //    weak var delegate: ListTrackersViewControllerDelegate?
         
     //MARK: - Private Properties
@@ -58,7 +58,6 @@ final class AddTrackerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        setLabel()
         setupNavBar()
         setupConstraints()
         setupButtons()
@@ -68,15 +67,15 @@ final class AddTrackerViewController: UIViewController {
      //MARK: - Actions
    
        @objc private func habitButtonClicked() {
-           let configureTrackerViewController = ScheduleViewController()
-//           configureTrackerViewController.delegate = self
+           let configureTrackerViewController = ConfigureTrackerViewController()
+           configureTrackerViewController.isRepeat = true
            let navigationController = UINavigationController(rootViewController: configureTrackerViewController)
            present(navigationController, animated: true)
        }
    
        @objc private func irregularButtonClicked() {
            let configureTrackerViewController = ConfigureTrackerViewController()
-//           configureTrackerViewController.delegate = self
+           configureTrackerViewController.isRepeat = false
            let navigationController = UINavigationController(rootViewController: configureTrackerViewController)
            present(navigationController, animated: true)
        }

@@ -4,6 +4,7 @@ class HeaderSectionView: UICollectionReusableView {
     
     static let identifier = "headerCellIdentifier"
     
+    //MARK: - Private Properties
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .Black
@@ -14,9 +15,9 @@ class HeaderSectionView: UICollectionReusableView {
         return label
     }()
     
+    //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
-//        backgroundColor = .green // NEED DELETE
         addSubview(titleLabel)
     
         NSLayoutConstraint.activate([
@@ -29,70 +30,9 @@ class HeaderSectionView: UICollectionReusableView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    //
-    //func setTrackerSupplementaryView(text: String) {
-    //    titleLabel.text = text
-    //}
-    //}
-    
+   
+    //MARK: - Functions
     func configure(_ text: String) {
         titleLabel.text = text
     }
-//        addSubview(titleLabel)
-//
-//        NSLayoutConstraint.activate([
-//            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-//            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-//            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)
-//        ])
-//        NSLayoutConstraint.activate([
-//            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
-//            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -28),
-//            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-//        ])
-//    }
 }
-
-
-//override init(frame: CGRect) {
-//    super.init(frame: frame)
-//
-//    addSubview(titleLabel)
-//
-//    NSLayoutConstraint.activate([
-//        titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-//        titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-//        titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)
-//    ])
-//}
-//
-//required init?(coder: NSCoder) {
-//    fatalError("init(coder:) has not been implemented")
-//}
-//
-//func setTrackerSupplementaryView(text: String) {
-//    titleLabel.text = text
-//}
-//}
-
-
-//class SupplementaryView: UICollectionReusableView {
-//    let titleLabel = UILabel()
-//
-//    override init(frame: CGRect) {
-//        super.init(frame: frame)
-//
-//        addSubview(titleLabel)
-//        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-//
-//        NSLayoutConstraint.activate([
-//            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-//            titleLabel.topAnchor.constraint(equalTo: topAnchor),
-//            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-//        ])
-//    }
-//
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//}

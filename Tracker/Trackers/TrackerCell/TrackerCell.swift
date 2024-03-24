@@ -1,14 +1,22 @@
 import UIKit
 
+//MARK: - Protocol
 protocol TrackerCellDelegate: AnyObject {
     func completedTracker(id: UUID, at indexPath: IndexPath)
     func uncompletedTracker(id: UUID, at indexPath: IndexPath)
 }
 
+//MARK: - TrackerCell
+
 final class TrackerCell: UICollectionViewCell {
     static let identifier = "taskCellIdentifier"
+    weak var delegate: TrackerCellDelegate?
+    let pointSize = UIImage.SymbolConfiguration(pointSize: 11)
     
-    //MARK: - Properties
+    //MARK: - Private Properties
+    
+    private let dataManager = DataManager.shared
+    
     private let mainView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16
@@ -42,7 +50,6 @@ final class TrackerCell: UICollectionViewCell {
         stack.distribution = .fill
         stack.spacing = 0
         stack.translatesAutoresizingMaskIntoConstraints = false
-//        stack.backgroundColor = .Red // NEED DELETE
         return stack
     }()
     
@@ -56,29 +63,28 @@ final class TrackerCell: UICollectionViewCell {
     
     private lazy var plusButton: UIButton = {
         let button = UIButton(type: .system)
-//        let pointSize = UIImage.SymbolConfiguration(pointSize: 11)
-//        let image = UIImage(systemName: "Plus", withConfiguration: pointSize)
-//        button.tintColor = .Red
-//        button.setImage(image, for: .normal)
-//        button.setImage(UIImage(named: "Plus"), for: .normal)
+        let image = UIImage(systemName: "plus", withConfiguration: pointSize)
+        button.setImage(image, for: .normal)
+        //        button.setImage(UIImage(named: "Plus"), for: .normal)
         button.tintColor = .White
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 34 / 2
-        button.addTarget(TrackerCell.self, action: #selector(trackButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(trackButtonTapped), for: .touchUpInside)
         return button
     }()
     
-    weak var delegate: TrackerCellDelegate?
     private var isCompletedToday: Bool = false
     private var trackerID: UUID?
     private var indexPath: IndexPath?
     
-    //MARK: - Helpers
+    //MARK: - Functions
+    
     func configure(
         with tracker: Tracker,
         isCompletedToday: Bool,
         completedDays: Int,
         indexPath: IndexPath
+//        currentDate: Date
     ) {
         self.trackerID = tracker.id
         self.isCompletedToday = isCompletedToday
@@ -92,14 +98,31 @@ final class TrackerCell: UICollectionViewCell {
         taskTitleLabel.text = tracker.title
         emojiLabel.text = tracker.emoji
         
-        let wordDay = pluralizeDays(completedDays) //need check
+        let wordDay = pluralizeDays(completedDays)
         counterDayLabel.text = "\(wordDay)"
         
-//        let image = isCompletedToday ? doneImage : plusImage
-        let image = isCompletedToday ? UIImage(named: "Done") : UIImage(named: "Plus")
-        plusButton.tintColor = color
+        let image = isCompletedToday ? UIImage(systemName: "checkmark", withConfiguration: pointSize) : UIImage(systemName: "plus", withConfiguration: pointSize)
+        plusButton.backgroundColor = color
         plusButton.alpha = isCompletedToday ? 0.3 : 1
         plusButton.setImage(image, for: .normal)
+        
+       // TO DO
+//        let calendar = Calendar.current
+//        let maxWeekday = calendar.component(.weekday, from: currentDate)
+//        if tracker.schedule.max(by: { w1, w2 in
+//            return w1.rawValue > w2.rawValue
+//        }) {
+        
+//        let tracker = calendar.component(.weekday, from: Weekday)
+        
+//        if maxWeekday in tracker.schedule {
+            
+//        }
+//        if tracker.weekday > maxWeekday {
+//            plusButton.isEnabled = false
+//        } else {
+//            plusButton.isEnabled = true
+//        }
     }
     
     private func addElements() {
@@ -133,23 +156,19 @@ final class TrackerCell: UICollectionViewCell {
             plusButton.heightAnchor.constraint(equalToConstant: 34),
             plusButton.topAnchor.constraint(equalTo: stackView.topAnchor, constant: 8),
             plusButton.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -12),
-//            plusButton.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 121),
-//
+            
             counterDayLabel.topAnchor.constraint(equalTo: stackView.topAnchor, constant: 16),
             counterDayLabel.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 12),
             
-            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor), //need check
-//            stackView.topAnchor.constraint(equalTo: mainView.bottomAnchor, constant: 8),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             stackView.topAnchor.constraint(equalTo: mainView.bottomAnchor),
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             stackView.heightAnchor.constraint(equalToConstant: 58)
-        
-            
         ])
     }
     
     private func pluralizeDays(_ count: Int) -> String {
-    let remainder10 = count % 10
+        let remainder10 = count % 10
         let remainder100 = count % 100
         
         if remainder10 == 1 && remainder100 != 11 {
@@ -160,25 +179,17 @@ final class TrackerCell: UICollectionViewCell {
             return "\(count) дней"
         }
     }
-//    private let doneImage = UIImage(systemName: "Done")
-//    private let plusImage: UIImage = {
-//        let pointSize = UIImage.SymbolConfiguration(pointSize:11)
-//        let image = UIImage(systemName: "Plus", withConfiguration: pointSize) ?? UIImage()
-//        return image
-//    }()
     
     @objc private func trackButtonTapped() {
-        //cell delegate
         guard let trackerID = trackerID, let indexPath = indexPath else {
             assertionFailure("no tracker id")
             return
         }
-
-        if isCompletedToday {
-            delegate?.uncompletedTracker(id: trackerID, at: indexPath)
-        } else {
-            delegate?.completedTracker(id: trackerID, at: indexPath)
+            if isCompletedToday {
+                delegate?.uncompletedTracker(id: trackerID, at: indexPath)
+            } else {
+                delegate?.completedTracker(id: trackerID, at: indexPath)
+            }
         }
-    }
-
-}//end of class
+    
+}

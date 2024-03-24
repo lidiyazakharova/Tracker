@@ -87,6 +87,8 @@ final class TrackersViewController: UIViewController {
         textField.attributedPlaceholder = attributedPlaceholder
         textField.delegate = self
         
+        textField.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .horizontal)//need check
+        
         return textField
     }()
     
@@ -96,31 +98,25 @@ final class TrackersViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .Blue
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        button.widthAnchor.constraint(equalToConstant: 83).isActive = true
         button.isHidden = true
+        button.addTarget(self, action: #selector(cancelSearch), for: .touchUpInside)
         return button
+    }()
+    
+    
+    private lazy var cancelConstraint: NSLayoutConstraint = {
+        return searchTextField.trailingAnchor.constraint(equalTo: cancelButton.leadingAnchor, constant: -5)
+    }()
+    private lazy var noCancelConstraint: NSLayoutConstraint = {
+        return searchTextField.trailingAnchor.constraint(equalTo: searchStackView.trailingAnchor, constant: -5)
     }()
     
     private let placeholderView = PlaceholderView()
+    private let emptySearchPlaceholderView = EmptySearchPlaceholderView()
     
     private var collectionView = UICollectionView(frame: .zero,
                                                   collectionViewLayout: UICollectionViewFlowLayout())
-    
-    private lazy var filterButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Фильтры", for: .normal)
-        button.backgroundColor = .Blue
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-        button.tintColor = .White
-        button.addTarget(
-            self,
-            action: #selector(selectFilter),
-            for: .touchUpInside
-        )
-        button.layer.cornerRadius = 16 // need check
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.isHidden = true
-        return button
-    }()
     
     private let params = GeometricParams(
         cellCount: 2,
@@ -144,8 +140,9 @@ final class TrackersViewController: UIViewController {
         addElements()
         setupConstraints()
         configureCollectionView()
-        placeholderView.configure()
-        updateDataLabelTitle(with: Date())
+        placeholderView.configureEmptyTrackerPlaceholder()
+        emptySearchPlaceholderView.configureEmptySearchPlaceholder()
+        emptySearchPlaceholderView.isHidden = true
     }
     
 
@@ -154,7 +151,6 @@ final class TrackersViewController: UIViewController {
     private func configureView() {
         view.backgroundColor = .White
         searchTextField.returnKeyType = .done
-        filterButton.layer.zPosition = 2
     }
     
     private func reloadData() {
@@ -166,8 +162,8 @@ final class TrackersViewController: UIViewController {
     private func addElements() {
         view.addSubview(headerView)
         view.addSubview(placeholderView)
+        view.addSubview(emptySearchPlaceholderView)
         view.addSubview(collectionView)
-        view.addSubview(filterButton)
         
         headerView.addSubview(plusButton)
         headerView.addSubview(titleHeader)
@@ -195,7 +191,8 @@ final class TrackersViewController: UIViewController {
     }
     
     private func setupConstraints() {
-        NSLayoutConstraint.activate([
+        
+            NSLayoutConstraint.activate([
             headerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             headerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
@@ -225,23 +222,19 @@ final class TrackersViewController: UIViewController {
             placeholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             placeholderView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 220),
             
+            emptySearchPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptySearchPlaceholderView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 220),
+            
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -17),
-            filterButton.heightAnchor.constraint(equalToConstant: 50),
-            filterButton.widthAnchor.constraint(equalToConstant: 114),
-            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             searchTextField.leadingAnchor.constraint(equalTo: searchStackView.leadingAnchor),
-            searchTextField.trailingAnchor.constraint(equalTo: cancelButton.leadingAnchor, constant: -5),
-            
-            cancelButton.trailingAnchor.constraint(equalTo: searchStackView.trailingAnchor),
-            
-//            categories.setContentCompressionResistancePriority(<#T##UILayoutPriority#>, for: <#T##NSLayoutConstraint.Axis#>)
-//            categories.setContentHuggingPriority(<#T##priority: UILayoutPriority##UILayoutPriority#>, for: <#T##NSLayoutConstraint.Axis#>)
+            noCancelConstraint,
+
+            cancelButton.trailingAnchor.constraint(equalTo: searchStackView.trailingAnchor)
         ])
     }
     
@@ -258,14 +251,17 @@ final class TrackersViewController: UIViewController {
     
     @objc private func addTask() {
         let createTrackerVC = AddTrackerViewController()
-        createTrackerVC.updateDelegate = self
-        
         let navVC = UINavigationController(rootViewController: createTrackerVC)
         present(navVC, animated: true)
     }
     
-    @objc private func selectFilter() {
-        print("Tapped filter")
+    @objc private func cancelSearch() {
+        cancelButton.isHidden = true
+        cancelConstraint.isActive = false
+        noCancelConstraint.isActive = true
+        searchTextField.text = ""
+        
+        reloadFilteredCategories(text: searchTextField.text, date: datePicker.date)
     }
     
     @objc private func dateChanged() {
@@ -275,21 +271,19 @@ final class TrackersViewController: UIViewController {
     
     private func reloadFilteredCategories(text: String?, date: Date) {
         let calendar = Calendar.current
-        let filteredWeekday = calendar.component(.weekday, from: datePicker.date)
-        let filterText = (searchTextField.text ?? "").lowercased()
-            let filteredWeekDay = calendar.component(.weekday, from: date)
-            let filterText = (text ?? "").lowercased()
-        
+        let filteredWeekDay = calendar.component(.weekday, from: date)
+        let filterText = (text ?? "").lowercased()
         
         filteredCategories = categories.compactMap { category in
-          let trackers = category.trackers.filter { tracker in
-              let textCondition = filterText.isEmpty ||
-              tracker.title.lowercased().contains(filterText)
-              let dateCondition = tracker.schedule?.contains { weekDay in
-                        weekDay.numberValue == filteredWeekDay
-                    } == true
-              return textCondition //&& dateCondition
-                }
+            let trackers = category.trackers.filter { tracker in
+                let textCondition = filterText.isEmpty || tracker.title.lowercased().contains(filterText)
+                
+                let dateCondition = tracker.schedule.contains(where: { weekDay in
+                    weekDay.rawValue == filteredWeekDay
+                }) == true
+                
+                return textCondition && dateCondition
+            }
             
             if trackers.isEmpty {
                 return nil
@@ -300,6 +294,7 @@ final class TrackersViewController: UIViewController {
         
         collectionView.reloadData()
         reloadPlaceholder()
+        emptySearchPlaceholderView.isHidden = !filteredCategories.isEmpty
     }
     
     private func reloadPlaceholder() {
@@ -314,7 +309,10 @@ extension TrackersViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        reloadFilteredCategories()
+        reloadFilteredCategories(text: textField.text, date: datePicker.date)
+        cancelButton.isHidden = false
+        cancelConstraint.isActive = true
+        noCancelConstraint.isActive = false
         return true
     }
     
@@ -384,7 +382,6 @@ extension TrackersViewController: TrackerCellDelegate {
     func completedTracker(id: UUID, at indexPath: IndexPath) {
         let trackerRecord = TrackerRecord(trackerID: id, date: datePicker.date)
         completedTrackers.append(trackerRecord)
-        
         collectionView.reloadItems(at: [indexPath])
     }
     
@@ -425,56 +422,56 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-
-// MARK: - TrackersViewControllerDelegate
-
-extension TrackersViewController: TrackersViewControllerDelegate {
-    func createdTracker(tracker: Tracker, categoryTitle: String) {
-        do {
-            try trackerStore.addTracker(tracker, toCategory: TrackerCategory(categoryTitle: categoryTitle, trackers: []))
-            categories.append(TrackerCategory(categoryTitle: categoryTitle, trackers: [tracker]))
-            filterVisibleCategories(for: currentDate)
-            collectionView.reloadData()
-            reloadData()
-        } catch {
-            print("Failed to add tracker to Core Data: \(error)")
-        }
-    }
-}
-
-// MARK: - UITextFieldDelegate
-
-extension TrackersViewController: UISearchTextFieldDelegate {
-    private func textFieldShouldReturn(_ textField: UISearchTextField) -> Bool {
-        textField.resignFirstResponder()
-        hideNoResultsImage()
-        return true
-    }
-}
-
-
-
-
-
-// MARK: - TrackerCollectionViewCellDelegate
-
-extension TrackersViewController: TrackerCollectionViewCellDelegate {
-    func competeTracker(id: UUID) {
-        guard currentDate <= Date() else {
-            return
-        }
-        completedTrackers.append(TrackerRecord(trackerID: id, date: currentDate))
-        collectionView.reloadData()
-    }
-
-    func uncompleteTracker(id: UUID) {
-        completedTrackers.removeAll { element in
-            if (element.trackerID == id &&  Calendar.current.isDate(element.date, equalTo: currentDate, toGranularity: .day)) {
-                return true
-            } else {
-                return false
-            }
-        }
-        collectionView.reloadData()
-    }
-}
+//
+//// MARK: - TrackersViewControllerDelegate
+//
+//extension TrackersViewController: TrackersViewControllerDelegate {
+//    func createdTracker(tracker: Tracker, categoryTitle: String) {
+//        do {
+//            try trackerStore.addTracker(tracker, toCategory: TrackerCategory(categoryTitle: categoryTitle, trackers: []))
+//            categories.append(TrackerCategory(categoryTitle: categoryTitle, trackers: [tracker]))
+//            filterVisibleCategories(for: currentDate)
+//            collectionView.reloadData()
+//            reloadData()
+//        } catch {
+//            print("Failed to add tracker to Core Data: \(error)")
+//        }
+//    }
+//}
+//
+//// MARK: - UITextFieldDelegate
+//
+//extension TrackersViewController: UISearchTextFieldDelegate {
+//    private func textFieldShouldReturn(_ textField: UISearchTextField) -> Bool {
+//        textField.resignFirstResponder()
+//        hideNoResultsImage()
+//        return true
+//    }
+//}
+//
+//
+//
+//
+//
+//// MARK: - TrackerCollectionViewCellDelegate
+//
+//extension TrackersViewController: TrackerCollectionViewCellDelegate {
+//    func competeTracker(id: UUID) {
+//        guard currentDate <= Date() else {
+//            return
+//        }
+//        completedTrackers.append(TrackerRecord(trackerID: id, date: currentDate))
+//        collectionView.reloadData()
+//    }
+//
+//    func uncompleteTracker(id: UUID) {
+//        completedTrackers.removeAll { element in
+//            if (element.trackerID == id &&  Calendar.current.isDate(element.date, equalTo: currentDate, toGranularity: .day)) {
+//                return true
+//            } else {
+//                return false
+//            }
+//        }
+//        collectionView.reloadData()
+//    }
+//}

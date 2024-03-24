@@ -1,6 +1,6 @@
 import UIKit
 
-// MARK: - ScheduleViewControllerDelegate
+// MARK: - Delegate
 
 protocol ScheduleViewControllerDelegate: AnyObject {
     func updateScheduleInfo(_ selectedDays: [Weekday],_ switchStates: [Int: Bool])
@@ -42,7 +42,7 @@ final class ScheduleViewController: UIViewController {
         return button
     }()
     
-    // MARK: - UIViewController Lifecycle
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,9 +60,10 @@ final class ScheduleViewController: UIViewController {
         switchStatus()
         delegate?.updateScheduleInfo(selectedSchedule, switchStates)
         navigationController?.popViewController(animated: true)
+        print("Выбрано расписание")
     }
     
-    // MARK: - Private Methods
+    // MARK: - Private Functions
     
     private func setupNavBar(){
         navigationItem.title = "Расписание"
@@ -112,7 +113,7 @@ final class ScheduleViewController: UIViewController {
     }
 }
 
-// MARK: - UITableViewDataSource (UITableViewDelegate)
+// MARK: - UITableViewDataSource,Delegate
 
 extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -121,7 +122,7 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleCell.reuseIdentifier, for: indexPath) as? ScheduleCell else { return UITableViewCell()}
-        cell.backgroundColor = .LightGray 
+        cell.backgroundColor = .LightGray
         cell.textLabel?.text = Weekday.allCases[indexPath.row].value
         let switchButton = UISwitch(frame: .zero)
         switchButton.setOn(switchStates[indexPath.row] ?? false, animated: true)
