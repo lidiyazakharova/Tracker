@@ -1,6 +1,12 @@
 import UIKit
 
+protocol CategoryViewControllerDelegate {
+    func didSelectCategory(_ category: TrackerCategory)
+}
+
 final class CategoryViewController: UIViewController {
+    
+    var delegate: CategoryViewControllerDelegate?
     
     // MARK: - Private Properties
     
@@ -38,21 +44,42 @@ final class CategoryViewController: UIViewController {
         return button
     }()
     
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.layer.cornerRadius = 16
+        tableView.layer.masksToBounds = true
+        tableView.separatorStyle = .singleLine
+        tableView.tableHeaderView = UIView()
+        tableView.separatorColor = .gray
+        tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: CategoryTableViewCell.reuseIdentifier)
+        return tableView
+    }()
+    
+    private var trackerCategories: [TrackerCategory] = []
+    private var selectedCategoryIndex = -1
+    
     // MARK: - UIViewController Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .White
+        
         setupNavBar()
-        setupView()
+        addViews()
         setupConstraints()
+        updateEmptyStateVisibility()
+        
+        tableView.delegate = self
+        tableView.dataSource = self
     }
     
     // MARK: - Actions
     
     @objc private func pushAddCategoryButton() {
         let newCategoryViewController = NewCategoryViewController()
+        newCategoryViewController.delegate = self
         let navigationController = UINavigationController(rootViewController: newCategoryViewController)
         present(navigationController, animated: true)
     }
@@ -60,16 +87,19 @@ final class CategoryViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setupNavBar() {
+        navigationItem.hidesBackButton = true
         navigationItem.title = "Категория"
     }
     
-    private func setupView() {
+    private func  addViews() {
         [label,
          emptyScreenImage,
          addCategoryButton,
+         tableView
         ].forEach {
             view.addSubview($0)
         }
+        
     }
     
     private func setupConstraints() {
@@ -85,9 +115,109 @@ final class CategoryViewController: UIViewController {
             addCategoryButton.heightAnchor.constraint(equalToConstant: 60),
             addCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             addCategoryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            addCategoryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
+            addCategoryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -24),
         ])
+    }
+    
+    private func showEmptyStateImage() {
+        emptyScreenImage.isHidden = false
+        label.isHidden = false
+        tableView.isHidden = true
+    }
+    
+    private func hideEmptyStateImage() {
+        emptyScreenImage.isHidden = true
+        label.isHidden = true
+        tableView.isHidden = false
+    }
+    
+    private func updateEmptyStateVisibility() {
+        if trackerCategories.isEmpty {
+            showEmptyStateImage()
+        } else {
+            hideEmptyStateImage()
+        }
     }
 }
 
+// MARK: - NewCategoryViewControllerDelegate
+extension CategoryViewController: NewCategoryViewControllerDelegate {
+    
+    func didCreateCategory(_ category: TrackerCategory) {
+        trackerCategories.append(category)
+        updateEmptyStateVisibility()
+        tableView.reloadData()
+    }
+    
+}
+
+// MARK: - UITableViewDataSource, UITableViewDelegate
+
+extension CategoryViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return trackerCategories.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.reuseIdentifier, for: indexPath)
+        guard cell is CategoryTableViewCell else {
+            return UITableViewCell()
+        }
+        cell.textLabel?.text = trackerCategories[indexPath.row].title
+        cell.backgroundColor = .gray
+        cell.separatorInset = UIEdgeInsets( top: 0, left: 16, bottom: 0, right: 16 )
+        cell.layer.masksToBounds = true
+        cell.layer.cornerRadius = 16.0
+        
+        if trackerCategories.count == 1 {
+            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        } else {
+            let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
+            if indexPath.row == 0 {
+                cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            } else if indexPath.row == numberOfRows - 1 {
+                cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            } else {
+                cell.layer.maskedCorners = []
+            }
+        }
+        
+        if indexPath.row == selectedCategoryIndex {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 75
+    }
+}
+
+extension CategoryViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        selectedCategoryIndex = indexPath.row
+        tableView.reloadData()
+        
+        let selectedCategory = trackerCategories[indexPath.row]
+        delegate?.didSelectCategory(selectedCategory)
+        navigationController?.popViewController(animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        }
+    }
+}
 

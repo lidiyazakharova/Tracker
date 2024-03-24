@@ -71,6 +71,25 @@ class DataManager {
         
     ]
     
+    func addTracker(title: String, categoryTitle: String, schedule: [Weekday]) {
+        var category = categories.first(where: { category in category.title == categoryTitle}) ?? TrackerCategory(
+            title: categoryTitle,
+            trackers: []
+        )
+        
+        category.trackers.append(
+            Tracker(
+                id: UUID(),
+                title: title,
+                color: .blue,
+                emoji: "👕",
+                schedule: schedule
+            )
+        )
+        
+        categories.append(category)
+    }
+    
     private init() {}
 }
 

@@ -2,12 +2,21 @@ import UIKit
 
 //TO DO выбор заголовка и кнопки расписания от статуса
 //выстроить констрейнты и вью
+protocol ConfigureTrackerViewControllerDelegate {
+    func trackerDidSaved()
+}
 
 final class ConfigureTrackerViewController: UIViewController {
     
     var isRepeat: Bool = false
+    var delegate: ConfigureTrackerViewControllerDelegate?
     
     let titlesForTableView = ["Категория", "Расписание"]
+    
+    private let dataManager = DataManager.shared
+    
+    private var selectedSchedule: [Weekday] = []
+    private var selectedTrackerCategory: TrackerCategory?
 
     private lazy var textField: UITextField = {
         let textField = UITextField()
@@ -63,13 +72,12 @@ final class ConfigureTrackerViewController: UIViewController {
     private let createButton: UIButton = {
         let createButton = UIButton()
         createButton.translatesAutoresizingMaskIntoConstraints = false
-        createButton.backgroundColor = .Gray
         createButton.layer.cornerRadius = 16
         createButton.layer.masksToBounds = true
         createButton.setTitle("Создать", for: .normal)
         createButton.setTitleColor(.White, for: .normal)
         createButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        createButton.addTarget(ConfigureTrackerViewController.self, action: #selector(createButtonTapped), for: .touchUpInside)
+        createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         return createButton
     }()
     
@@ -90,6 +98,7 @@ final class ConfigureTrackerViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
     
+        checkButtonActivation()
     }
     
     //MARK: - Actions
@@ -99,8 +108,15 @@ final class ConfigureTrackerViewController: UIViewController {
     }
     
     @objc private func createButtonTapped() {
-        print("tracker created")
-        dismiss(animated: true)
+        guard let categoryTitle = selectedTrackerCategory?.title else { return }
+        
+        dataManager.addTracker(
+            title: textField.text ?? "",
+            categoryTitle: categoryTitle,
+            schedule: selectedSchedule
+        )
+        
+        dismiss(animated: true, completion: { self.delegate?.trackerDidSaved() })
     }
     
     //MARK: - Private Functions
@@ -135,6 +151,24 @@ final class ConfigureTrackerViewController: UIViewController {
             tableView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24)
         ])
+    }
+    
+    private func checkButtonActivation() {
+        let isAvailable: Bool
+        
+        if(isRepeat) {
+            isAvailable = !selectedSchedule.isEmpty && selectedTrackerCategory != nil
+        } else {
+            isAvailable = selectedTrackerCategory != nil
+        }
+        
+        createButton.isEnabled = isAvailable
+        
+        if isAvailable {
+            createButton.backgroundColor = .Black
+        } else {
+            createButton.backgroundColor = .Gray
+        }
     }
 }
 
@@ -177,32 +211,56 @@ extension ConfigureTrackerViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.row == 0 {
             let categoryViewController = CategoryViewController()
-//            categoryViewController.delegate = self
+            categoryViewController.delegate = self
             navigationController?.pushViewController(categoryViewController, animated: true)
         } else if indexPath.row == 1 {
             let scheduleViewController = ScheduleViewController()
-//            scheduleViewController.delegate = self
+            scheduleViewController.delegate = self
 //            scheduleViewController.switchStates = selectedWeekdays
             navigationController?.pushViewController(scheduleViewController, animated: true)
         }
     }
 }
-//
-// //MARK: - ScheduleViewControllerDelegate
-//
-//extension ConfigureTrackerViewController: ScheduleViewControllerDelegate {
-//    func updateScheduleInfo(_ selectedDays: [Weekday], _ switchStates: [Int: Bool]) {
-//        self.selectedSchedule = selectedDays
-//        let subText: String
-//        if selectedDays.count == Weekday.allCases.count {
-//            subText = "Каждый день"
-//        } else {
-//            subText = selectedDays.map { $0.shortValue }.joined(separator: ", ")
-//        }
-//        setSubTitle(subText, forCellAt: IndexPath(row: 1, section: 0))
-//        isScheduleSelected = true
-//        checkButtonActivation()
+
+ //MARK: - ScheduleViewControllerDelegate
+
+extension ConfigureTrackerViewController: ScheduleViewControllerDelegate {
+    func updateScheduleInfo(_ selectedDays: [Weekday], _ switchStates: [Int: Bool]) {
+        self.selectedSchedule = selectedDays
+        
+        let subText: String
+        if selectedDays.count == Weekday.allCases.count {
+            subText = "Каждый день"
+        } else {
+            subText = selectedDays.map { $0.shortValue }.joined(separator: ", ")
+        }
+        
+        guard let cell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? ActivityTableCell else {
+            return
+        }
+        cell.set(subText: subText)
+        
+        checkButtonActivation()
 //        selectedWeekdays = switchStates
-//        tableView.reloadData()
-//    }
-//}
+        tableView.reloadData()
+    }
+}
+
+
+//MARK: - CategoryViewControllerDelegate
+
+extension ConfigureTrackerViewController: CategoryViewControllerDelegate {
+    func didSelectCategory(_ category: TrackerCategory) {
+        self.selectedTrackerCategory = category
+        
+        let subText = selectedTrackerCategory?.title ?? ""
+        
+        guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ActivityTableCell else {
+            return
+        }
+        cell.set(subText: subText)
+        tableView.reloadData()
+        
+        checkButtonActivation()
+    }
+}

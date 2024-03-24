@@ -1,7 +1,5 @@
 import UIKit
 
-//TO DO починить логику
-
 protocol TrackersViewControllerDelegate: AnyObject {
     func createdTracker(tracker: Tracker, categoryTitle: String)
 }
@@ -251,6 +249,7 @@ final class TrackersViewController: UIViewController {
     
     @objc private func addTask() {
         let createTrackerVC = AddTrackerViewController()
+        createTrackerVC.delegate = self
         let navVC = UINavigationController(rootViewController: createTrackerVC)
         present(navVC, animated: true)
     }
@@ -422,56 +421,9 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-//
-//// MARK: - TrackersViewControllerDelegate
-//
-//extension TrackersViewController: TrackersViewControllerDelegate {
-//    func createdTracker(tracker: Tracker, categoryTitle: String) {
-//        do {
-//            try trackerStore.addTracker(tracker, toCategory: TrackerCategory(categoryTitle: categoryTitle, trackers: []))
-//            categories.append(TrackerCategory(categoryTitle: categoryTitle, trackers: [tracker]))
-//            filterVisibleCategories(for: currentDate)
-//            collectionView.reloadData()
-//            reloadData()
-//        } catch {
-//            print("Failed to add tracker to Core Data: \(error)")
-//        }
-//    }
-//}
-//
-//// MARK: - UITextFieldDelegate
-//
-//extension TrackersViewController: UISearchTextFieldDelegate {
-//    private func textFieldShouldReturn(_ textField: UISearchTextField) -> Bool {
-//        textField.resignFirstResponder()
-//        hideNoResultsImage()
-//        return true
-//    }
-//}
-//
-//
-//
-//
-//
-//// MARK: - TrackerCollectionViewCellDelegate
-//
-//extension TrackersViewController: TrackerCollectionViewCellDelegate {
-//    func competeTracker(id: UUID) {
-//        guard currentDate <= Date() else {
-//            return
-//        }
-//        completedTrackers.append(TrackerRecord(trackerID: id, date: currentDate))
-//        collectionView.reloadData()
-//    }
-//
-//    func uncompleteTracker(id: UUID) {
-//        completedTrackers.removeAll { element in
-//            if (element.trackerID == id &&  Calendar.current.isDate(element.date, equalTo: currentDate, toGranularity: .day)) {
-//                return true
-//            } else {
-//                return false
-//            }
-//        }
-//        collectionView.reloadData()
-//    }
-//}
+extension TrackersViewController: CreatingTrackerViewControllerDelegate {
+    func trackerDidCreate() {
+        collectionView.reloadData()
+        reloadData()
+    }
+}
