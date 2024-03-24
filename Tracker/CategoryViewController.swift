@@ -84,7 +84,7 @@ final class CategoryViewController: UIViewController {
         present(navigationController, animated: true)
     }
     
-    // MARK: - Private Methods
+    // MARK: - Private Functions
     
     private func setupNavBar() {
         navigationItem.hidesBackButton = true
@@ -169,7 +169,7 @@ extension CategoryViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         cell.textLabel?.text = trackerCategories[indexPath.row].title
-        cell.backgroundColor = .gray
+        cell.backgroundColor = .LightGray.withAlphaComponent(0.3)
         cell.separatorInset = UIEdgeInsets( top: 0, left: 16, bottom: 0, right: 16 )
         cell.layer.masksToBounds = true
         cell.layer.cornerRadius = 16.0

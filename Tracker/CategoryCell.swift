@@ -15,7 +15,6 @@ final class CategoryTableViewCell: UITableViewCell {
     }()
     
     // MARK: - Initializers
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
@@ -25,7 +24,7 @@ final class CategoryTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Private Methods
+    // MARK: - Private Functions
     
     private func setupViews() {
         contentView.addSubview(cellLabel)

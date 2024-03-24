@@ -65,7 +65,6 @@ final class TrackerCell: UICollectionViewCell {
         let button = UIButton(type: .system)
         let image = UIImage(systemName: "plus", withConfiguration: pointSize)
         button.setImage(image, for: .normal)
-        //        button.setImage(UIImage(named: "Plus"), for: .normal)
         button.tintColor = .White
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 34 / 2
@@ -77,6 +76,19 @@ final class TrackerCell: UICollectionViewCell {
     private var trackerID: UUID?
     private var indexPath: IndexPath?
     
+    //MARK: - Actions
+    @objc private func trackButtonTapped() {
+        guard let trackerID = trackerID, let indexPath = indexPath else {
+            assertionFailure("no tracker id")
+            return
+        }
+        if isCompletedToday {
+            delegate?.uncompletedTracker(id: trackerID, at: indexPath)
+        } else {
+            delegate?.completedTracker(id: trackerID, at: indexPath)
+        }
+    }
+    
     //MARK: - Functions
     
     func configure(
@@ -84,7 +96,6 @@ final class TrackerCell: UICollectionViewCell {
         isCompletedToday: Bool,
         completedDays: Int,
         indexPath: IndexPath
-//        currentDate: Date
     ) {
         self.trackerID = tracker.id
         self.isCompletedToday = isCompletedToday
@@ -106,23 +117,6 @@ final class TrackerCell: UICollectionViewCell {
         plusButton.alpha = isCompletedToday ? 0.3 : 1
         plusButton.setImage(image, for: .normal)
         
-       // TO DO
-//        let calendar = Calendar.current
-//        let maxWeekday = calendar.component(.weekday, from: currentDate)
-//        if tracker.schedule.max(by: { w1, w2 in
-//            return w1.rawValue > w2.rawValue
-//        }) {
-        
-//        let tracker = calendar.component(.weekday, from: Weekday)
-        
-//        if maxWeekday in tracker.schedule {
-            
-//        }
-//        if tracker.weekday > maxWeekday {
-//            plusButton.isEnabled = false
-//        } else {
-//            plusButton.isEnabled = true
-//        }
     }
     
     private func addElements() {
@@ -179,17 +173,4 @@ final class TrackerCell: UICollectionViewCell {
             return "\(count) дней"
         }
     }
-    
-    @objc private func trackButtonTapped() {
-        guard let trackerID = trackerID, let indexPath = indexPath else {
-            assertionFailure("no tracker id")
-            return
-        }
-            if isCompletedToday {
-                delegate?.uncompletedTracker(id: trackerID, at: indexPath)
-            } else {
-                delegate?.completedTracker(id: trackerID, at: indexPath)
-            }
-        }
-    
 }

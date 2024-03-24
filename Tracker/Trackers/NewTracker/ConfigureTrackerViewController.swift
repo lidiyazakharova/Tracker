@@ -1,23 +1,20 @@
 import UIKit
 
-//TO DO выбор заголовка и кнопки расписания от статуса
-//выстроить констрейнты и вью
 protocol ConfigureTrackerViewControllerDelegate {
     func trackerDidSaved()
 }
 
 final class ConfigureTrackerViewController: UIViewController {
     
+    //MARK: - Properties
+    
     var isRepeat: Bool = false
     var delegate: ConfigureTrackerViewControllerDelegate?
-    
     let titlesForTableView = ["Категория", "Расписание"]
-    
     private let dataManager = DataManager.shared
-    
     private var selectedSchedule: [Weekday] = []
     private var selectedTrackerCategory: TrackerCategory?
-
+    
     private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -82,7 +79,7 @@ final class ConfigureTrackerViewController: UIViewController {
     }()
     
     
-    //MARK: - UIViewController
+    //MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,9 +92,10 @@ final class ConfigureTrackerViewController: UIViewController {
         stackView.addArrangedSubview(createButton)
         
         setupConstraints()
+        
         tableView.delegate = self
         tableView.dataSource = self
-    
+        
         checkButtonActivation()
     }
     
@@ -131,9 +129,9 @@ final class ConfigureTrackerViewController: UIViewController {
     
     private func setupConstraints() {
         if isRepeat {
-        tableView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+            tableView.heightAnchor.constraint(equalToConstant: 150).isActive = true
         } else {
-        tableView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+            tableView.heightAnchor.constraint(equalToConstant: 75).isActive = true
         }
         
         NSLayoutConstraint.activate([
@@ -141,12 +139,12 @@ final class ConfigureTrackerViewController: UIViewController {
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             stackView.heightAnchor.constraint(equalToConstant: 60),
             stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-
+            
             textField.heightAnchor.constraint(equalToConstant: 75),
             textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             textField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-
+            
             tableView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24)
@@ -161,7 +159,6 @@ final class ConfigureTrackerViewController: UIViewController {
         } else {
             isAvailable = selectedTrackerCategory != nil
         }
-        
         createButton.isEnabled = isAvailable
         
         if isAvailable {
@@ -173,6 +170,7 @@ final class ConfigureTrackerViewController: UIViewController {
 }
 
 // MARK: - UITableViewDataSource,Delegate
+
 extension ConfigureTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isRepeat {
@@ -192,7 +190,7 @@ extension ConfigureTrackerViewController: UITableViewDataSource {
                 cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
             }
             else { cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)}
-                
+            
             cell.titleLabel.text = titlesForTableView[indexPath.row]
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
@@ -216,13 +214,12 @@ extension ConfigureTrackerViewController: UITableViewDelegate {
         } else if indexPath.row == 1 {
             let scheduleViewController = ScheduleViewController()
             scheduleViewController.delegate = self
-//            scheduleViewController.switchStates = selectedWeekdays
             navigationController?.pushViewController(scheduleViewController, animated: true)
         }
     }
 }
 
- //MARK: - ScheduleViewControllerDelegate
+//MARK: - ScheduleViewControllerDelegate
 
 extension ConfigureTrackerViewController: ScheduleViewControllerDelegate {
     func updateScheduleInfo(_ selectedDays: [Weekday], _ switchStates: [Int: Bool]) {
@@ -241,7 +238,6 @@ extension ConfigureTrackerViewController: ScheduleViewControllerDelegate {
         cell.set(subText: subText)
         
         checkButtonActivation()
-//        selectedWeekdays = switchStates
         tableView.reloadData()
     }
 }
@@ -260,7 +256,6 @@ extension ConfigureTrackerViewController: CategoryViewControllerDelegate {
         }
         cell.set(subText: subText)
         tableView.reloadData()
-        
         checkButtonActivation()
     }
 }

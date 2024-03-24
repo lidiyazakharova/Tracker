@@ -6,7 +6,7 @@ protocol TrackersViewControllerDelegate: AnyObject {
 
 final class TrackersViewController: UIViewController {
     
-    //MARK: - Properties
+    //MARK: - Private Properties
     private let headerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -85,8 +85,6 @@ final class TrackersViewController: UIViewController {
         textField.attributedPlaceholder = attributedPlaceholder
         textField.delegate = self
         
-        textField.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .horizontal)//need check
-        
         return textField
     }()
     
@@ -143,9 +141,8 @@ final class TrackersViewController: UIViewController {
         emptySearchPlaceholderView.isHidden = true
     }
     
-
-    //MARK: - helpers
     
+    //MARK: - Functions
     private func configureView() {
         view.backgroundColor = .White
         searchTextField.returnKeyType = .done
@@ -190,7 +187,7 @@ final class TrackersViewController: UIViewController {
     
     private func setupConstraints() {
         
-            NSLayoutConstraint.activate([
+        NSLayoutConstraint.activate([
             headerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             headerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
@@ -231,7 +228,7 @@ final class TrackersViewController: UIViewController {
             
             searchTextField.leadingAnchor.constraint(equalTo: searchStackView.leadingAnchor),
             noCancelConstraint,
-
+            
             cancelButton.trailingAnchor.constraint(equalTo: searchStackView.trailingAnchor)
         ])
     }
@@ -299,11 +296,9 @@ final class TrackersViewController: UIViewController {
     private func reloadPlaceholder() {
         placeholderView.isHidden = !categories.isEmpty
     }
-    
 }
 
-
-
+//MARK: - UITextFieldDelegate
 extension TrackersViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -314,7 +309,6 @@ extension TrackersViewController: UITextFieldDelegate {
         noCancelConstraint.isActive = false
         return true
     }
-    
 }
 
 //MARK: - UICollectionViewDelegate, UICollectionViewDataSource
@@ -325,10 +319,10 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderSectionView.identifier, for: indexPath) as? HeaderSectionView else { return UICollectionReusableView() }//check
-
+        
         let titleCategory = filteredCategories[indexPath.section].title
         view.configure(titleCategory)
-
+        
         return view
     }
     
@@ -365,7 +359,7 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
     private func isTrackerCompletedToday(id: UUID) -> Bool {
         completedTrackers.contains { trackerRecord in
             isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
-           
+            
         }
     }
     
@@ -375,7 +369,7 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
     }
 }
 
-// MARK: - ListTrackersViewCellDelegate
+// MARK: - TrackersViewCellDelegate
 extension TrackersViewController: TrackerCellDelegate {
     
     func completedTracker(id: UUID, at indexPath: IndexPath) {
@@ -390,7 +384,7 @@ extension TrackersViewController: TrackerCellDelegate {
             let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: datePicker.date)
             return trackerRecord.trackerID == id && isSameDay
         }
-            collectionView.reloadItems(at: [indexPath])
+        collectionView.reloadItems(at: [indexPath])
     }
 }
 
@@ -405,7 +399,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let availableWidth = collectionView.frame.width - params.paddingWidth
         let cellWidth = availableWidth / CGFloat(params.cellCount)
-        return CGSize(width: cellWidth, height: CGFloat(148)) //need check
+        return CGSize(width: cellWidth, height: CGFloat(148))
     }
     
     func collectionView(
@@ -417,7 +411,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        UIEdgeInsets(top: 0, left: params.leftInset, bottom: 0, right: params.rightInset)//need check
+        UIEdgeInsets(top: 0, left: params.leftInset, bottom: 0, right: params.rightInset)
     }
 }
 

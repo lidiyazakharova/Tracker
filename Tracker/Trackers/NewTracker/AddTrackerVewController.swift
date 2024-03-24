@@ -44,7 +44,7 @@ final class AddTrackerViewController: UIViewController {
         return stack
     }()
     
-    //MARK: - UIViewController
+    //MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,10 +98,10 @@ final class AddTrackerViewController: UIViewController {
        }
 }
 
+//MARK: - ConfigureTrackerViewControllerDelegate
+
 extension AddTrackerViewController: ConfigureTrackerViewControllerDelegate {
-    
     func trackerDidSaved() {
         dismiss(animated: true, completion: { self.delegate?.trackerDidCreate() })
-    }
-    
+    }    
 }

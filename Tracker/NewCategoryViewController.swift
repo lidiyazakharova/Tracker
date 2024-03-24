@@ -4,9 +4,6 @@ protocol NewCategoryViewControllerDelegate: AnyObject {
     func didCreateCategory(_ category: TrackerCategory)
 }
 
-
-// MARK: - NewCategoryViewController
-
 final class NewCategoryViewController: UIViewController {
     
     weak var delegate: NewCategoryViewControllerDelegate?
@@ -19,7 +16,7 @@ final class NewCategoryViewController: UIViewController {
         textField.backgroundColor = .LightGray.withAlphaComponent(0.3)
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
-        textField.font = UIFont.systemFont(ofSize: 17)
+        textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         textField.placeholder = "Введите название категории"
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .done

@@ -2,7 +2,6 @@ import UIKit
 
 final class PlaceholderView: UIView {
     
-    
     //MARK: - Private Properties
     private lazy var emptyTrackersImage: UIImageView = {
         let emptyTrackersImage = UIImageView()

@@ -2,7 +2,6 @@ import UIKit
 
 final class EmptySearchPlaceholderView: UIView {
     
-    
     //MARK: - Private Properties
     private lazy var emptySearchImage: UIImageView = {
         let emptySearchImage = UIImageView()

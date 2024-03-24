@@ -5,7 +5,6 @@ final class ActivityTableCell: UITableViewCell {
     // MARK: - Properties
     static let reuseIdentifier = "ActivityTableCell"
    
-        
     let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -52,7 +51,7 @@ final class ActivityTableCell: UITableViewCell {
         }
     }
     
-    // MARK: - Private Methods
+    // MARK: - Private Functions
     
     private func setupView() {
         contentView.addSubview(titleLabel)
