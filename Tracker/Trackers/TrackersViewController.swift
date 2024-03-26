@@ -52,6 +52,7 @@ final class TrackersViewController: UIViewController {
         picker.translatesAutoresizingMaskIntoConstraints = false
         picker.clipsToBounds = true
         picker.layer.cornerRadius = 8
+        picker.backgroundColor = .DateBackground
         picker.tintColor = .Blue
         picker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         return picker
@@ -100,7 +101,6 @@ final class TrackersViewController: UIViewController {
         return button
     }()
     
-    
     private lazy var cancelConstraint: NSLayoutConstraint = {
         return searchTextField.trailingAnchor.constraint(equalTo: cancelButton.leadingAnchor, constant: -5)
     }()
@@ -124,7 +124,7 @@ final class TrackersViewController: UIViewController {
     private var categories: [TrackerCategory] = []
     private var filteredCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
-    
+    private var currentDate: Date = .init()
     private let dataManager = DataManager.shared
     
     //MARK: - Lifecycle
@@ -139,6 +139,7 @@ final class TrackersViewController: UIViewController {
         placeholderView.configureEmptyTrackerPlaceholder()
         emptySearchPlaceholderView.configureEmptySearchPlaceholder()
         emptySearchPlaceholderView.isHidden = true
+        addTapGestureToHideKeyboard()
     }
     
     
@@ -225,7 +226,6 @@ final class TrackersViewController: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            
             searchTextField.leadingAnchor.constraint(equalTo: searchStackView.leadingAnchor),
             noCancelConstraint,
             
@@ -257,13 +257,20 @@ final class TrackersViewController: UIViewController {
         noCancelConstraint.isActive = true
         searchTextField.text = ""
         
-        reloadFilteredCategories(text: searchTextField.text, date: datePicker.date)
+        
+        reloadFilteredCategories(text: searchTextField.text, date: currentDate)
     }
     
     @objc private func dateChanged() {
-        updateDateLabelTitle(with: datePicker.date)
-        reloadFilteredCategories(text: searchTextField.text, date: datePicker.date)
+        currentDate = datePicker.date
+        updateDateLabelTitle(with: currentDate)
+        reloadFilteredCategories(text: searchTextField.text, date: currentDate)
     }
+    
+    @objc private func hideKeyboard() {
+        searchTextField.endEditing(true)
+    }
+    
     
     private func reloadFilteredCategories(text: String?, date: Date) {
         let calendar = Calendar.current
@@ -276,7 +283,7 @@ final class TrackersViewController: UIViewController {
                 
                 let dateCondition = tracker.schedule.contains(where: { weekDay in
                     weekDay.rawValue == filteredWeekDay
-                }) == true
+                }) == true || tracker.schedule.isEmpty
                 
                 return textCondition && dateCondition
             }
@@ -290,11 +297,17 @@ final class TrackersViewController: UIViewController {
         
         collectionView.reloadData()
         reloadPlaceholder()
-        emptySearchPlaceholderView.isHidden = !filteredCategories.isEmpty
+        emptySearchPlaceholderView.isHidden = !filteredCategories.isEmpty || (searchTextField.text ?? "").isEmpty
     }
     
     private func reloadPlaceholder() {
-        placeholderView.isHidden = !categories.isEmpty
+        placeholderView.isHidden = !categories.isEmpty || !(searchTextField.text ?? "").isEmpty
+    }
+    
+    private func addTapGestureToHideKeyboard() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
 }
 
@@ -373,7 +386,10 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
 extension TrackersViewController: TrackerCellDelegate {
     
     func completedTracker(id: UUID, at indexPath: IndexPath) {
-        let trackerRecord = TrackerRecord(trackerID: id, date: datePicker.date)
+        guard currentDate <= Date() else {
+            return
+        }
+        let trackerRecord = TrackerRecord(trackerID: id, date: currentDate)
         completedTrackers.append(trackerRecord)
         collectionView.reloadItems(at: [indexPath])
     }
@@ -381,7 +397,7 @@ extension TrackersViewController: TrackerCellDelegate {
     func uncompletedTracker(id: UUID, at indexPath: IndexPath) {
         completedTrackers.removeAll { trackerRecord in
             isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
-            let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: datePicker.date)
+            let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: currentDate)
             return trackerRecord.trackerID == id && isSameDay
         }
         collectionView.reloadItems(at: [indexPath])
@@ -415,7 +431,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension TrackersViewController: CreatingTrackerViewControllerDelegate {
+extension TrackersViewController: AddTrackerViewControllerDelegate {
     func trackerDidCreate() {
         collectionView.reloadData()
         reloadData()

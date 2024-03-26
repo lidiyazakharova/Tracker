@@ -24,7 +24,7 @@ final class ScheduleViewController: UIViewController {
         tableView.layer.masksToBounds = true
         tableView.separatorStyle = .singleLine
         tableView.tableHeaderView = UIView()
-        tableView.separatorColor = .gray
+        tableView.separatorColor = .Gray
         tableView.register(ScheduleCell.self, forCellReuseIdentifier: ScheduleCell.reuseIdentifier)
         return tableView
     }()
@@ -122,14 +122,15 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleCell.reuseIdentifier, for: indexPath) as? ScheduleCell else { return UITableViewCell()}
-        cell.backgroundColor = .LightGray
+        cell.backgroundColor = .LightGray.withAlphaComponent(0.3)
         cell.textLabel?.text = Weekday.allCases[indexPath.row].value
         let switchButton = UISwitch(frame: .zero)
         switchButton.setOn(switchStates[indexPath.row] ?? false, animated: true)
-        switchButton.onTintColor = .blue
+        switchButton.onTintColor = .Blue
         switchButton.tag = indexPath.row
         cell.accessoryView = switchButton
         cell.selectionStyle = .none
+        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         return cell
     }
     

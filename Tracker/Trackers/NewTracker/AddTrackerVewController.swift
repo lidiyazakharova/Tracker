@@ -1,13 +1,13 @@
 import UIKit
 
-protocol CreatingTrackerViewControllerDelegate: AnyObject {
+protocol AddTrackerViewControllerDelegate: AnyObject {
     func trackerDidCreate()
 }
 
 final class AddTrackerViewController: UIViewController {
     
     var screenTitle: String = ""
-    var delegate: CreatingTrackerViewControllerDelegate?
+    var delegate: AddTrackerViewControllerDelegate?
         
     //MARK: - Private Properties
 

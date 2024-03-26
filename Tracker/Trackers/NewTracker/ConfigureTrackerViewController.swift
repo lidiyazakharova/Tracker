@@ -13,6 +13,7 @@ final class ConfigureTrackerViewController: UIViewController {
     let titlesForTableView = ["Категория", "Расписание"]
     private let dataManager = DataManager.shared
     private var selectedSchedule: [Weekday] = []
+    private var switchStates: [Int: Bool] = [:]
     private var selectedTrackerCategory: TrackerCategory?
     
     private lazy var textField: UITextField = {
@@ -36,6 +37,8 @@ final class ConfigureTrackerViewController: UIViewController {
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
         tableView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        tableView.separatorStyle = .singleLine
+        tableView.separatorColor = .Gray
         tableView.register(
             ActivityTableCell.self,
             forCellReuseIdentifier: ActivityTableCell.reuseIdentifier
@@ -96,6 +99,8 @@ final class ConfigureTrackerViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         
+        addTapGestureToHideKeyboard()
+        
         checkButtonActivation()
     }
     
@@ -107,14 +112,31 @@ final class ConfigureTrackerViewController: UIViewController {
     
     @objc private func createButtonTapped() {
         guard let categoryTitle = selectedTrackerCategory?.title else { return }
-        
-        dataManager.addTracker(
-            title: textField.text ?? "",
-            categoryTitle: categoryTitle,
-            schedule: selectedSchedule
-        )
+        if isRepeat {
+            dataManager.addTracker(
+                title: textField.text ?? "",
+                categoryTitle: categoryTitle,
+                schedule: selectedSchedule)
+            
+        } else {
+        let currentDate = Date()
+        let currentWeekday = Calendar.current.component(.weekday, from: currentDate)
+        let newSchedule = Schedule(value: Weekday(rawValue: currentWeekday) ?? .sunday, isOn: true)
+        let scheduleArray = [newSchedule]
+        let weekdayArray = scheduleArray.map { $0.value }
+          
+            dataManager.addTracker(
+                title: textField.text ?? "",
+                categoryTitle: categoryTitle,
+                schedule: weekdayArray)
+        }
+            
         
         dismiss(animated: true, completion: { self.delegate?.trackerDidSaved() })
+    }
+    
+    @objc private func hideKeyboard() {
+        textField.endEditing(true)
     }
     
     //MARK: - Private Functions
@@ -167,7 +189,14 @@ final class ConfigureTrackerViewController: UIViewController {
             createButton.backgroundColor = .Gray
         }
     }
+    
+    private func addTapGestureToHideKeyboard() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
 }
+
 
 // MARK: - UITableViewDataSource,Delegate
 
@@ -214,6 +243,7 @@ extension ConfigureTrackerViewController: UITableViewDelegate {
         } else if indexPath.row == 1 {
             let scheduleViewController = ScheduleViewController()
             scheduleViewController.delegate = self
+            scheduleViewController.switchStates = switchStates
             navigationController?.pushViewController(scheduleViewController, animated: true)
         }
     }
@@ -223,6 +253,7 @@ extension ConfigureTrackerViewController: UITableViewDelegate {
 
 extension ConfigureTrackerViewController: ScheduleViewControllerDelegate {
     func updateScheduleInfo(_ selectedDays: [Weekday], _ switchStates: [Int: Bool]) {
+        self.switchStates = switchStates
         self.selectedSchedule = selectedDays
         
         let subText: String
