@@ -30,19 +30,7 @@ final class TrackersViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
-    private lazy var dateLabel: UILabel = {
-        let label = UILabel()
-        label.backgroundColor = .DateBackground
-        label.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.clipsToBounds = true
-        label.layer.cornerRadius = 8
-        label.layer.zPosition = 10
-        return label
-    }()
-    
+        
     private lazy var datePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
@@ -52,8 +40,10 @@ final class TrackersViewController: UIViewController {
         picker.translatesAutoresizingMaskIntoConstraints = false
         picker.clipsToBounds = true
         picker.layer.cornerRadius = 8
-        picker.backgroundColor = .DateBackground
+        picker.backgroundColor = .BackgroundDate
         picker.tintColor = .Blue
+        picker.contentHorizontalAlignment = .center
+        
         picker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         return picker
     }()
@@ -163,7 +153,6 @@ final class TrackersViewController: UIViewController {
         
         headerView.addSubview(plusButton)
         headerView.addSubview(titleHeader)
-        headerView.addSubview(dateLabel)
         headerView.addSubview(datePicker)
         headerView.addSubview(searchStackView)
         searchStackView.addSubview(searchTextField)
@@ -200,14 +189,9 @@ final class TrackersViewController: UIViewController {
             titleHeader.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
             titleHeader.topAnchor.constraint(equalTo: plusButton.bottomAnchor, constant: 1),
             
-            dateLabel.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
-            dateLabel.centerYAnchor.constraint(equalTo: plusButton.centerYAnchor),
-            dateLabel.widthAnchor.constraint(equalToConstant: 77),
-            dateLabel.heightAnchor.constraint(equalToConstant: 34),
-            
             datePicker.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
             datePicker.centerYAnchor.constraint(equalTo: plusButton.centerYAnchor),
-            datePicker.widthAnchor.constraint(equalToConstant: 77),
+            datePicker.widthAnchor.constraint(equalToConstant: 95),
             datePicker.heightAnchor.constraint(equalToConstant: 34),
             
             searchStackView.topAnchor.constraint(equalTo: titleHeader.bottomAnchor, constant: 7),
@@ -239,10 +223,6 @@ final class TrackersViewController: UIViewController {
         return dateFormatter.string(from: date)
     }
     
-    private func updateDateLabelTitle(with date: Date) {
-        let dateString = formattedDate(from: date)
-        dateLabel.text = dateString
-    }
     
     @objc private func addTask() {
         let createTrackerVC = AddTrackerViewController()
@@ -263,7 +243,6 @@ final class TrackersViewController: UIViewController {
     
     @objc private func dateChanged() {
         currentDate = datePicker.date
-        updateDateLabelTitle(with: currentDate)
         reloadFilteredCategories(text: searchTextField.text, date: currentDate)
     }
     

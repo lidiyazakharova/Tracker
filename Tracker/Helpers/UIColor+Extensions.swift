@@ -8,6 +8,6 @@ extension UIColor {
     static var Gray: UIColor { UIColor(named: "Gray") ?? UIColor.gray }
     static var White: UIColor { UIColor(named: "White") ?? UIColor.white }
     static var LightGray: UIColor { UIColor(named: "LightGray") ?? UIColor.lightGray }
-    static var DateBackground: UIColor { UIColor(named: "DateBackground") ?? UIColor.lightGray }
+    static var BackgroundDate: UIColor { UIColor(named: "BackgroundDate") ?? UIColor.lightGray }
 }
 
