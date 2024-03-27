@@ -18,6 +18,9 @@
 		59169CD02BB067100054D62B /* NewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59169CCF2BB067100054D62B /* NewCategoryViewController.swift */; };
 		59169CD22BB09A9B0054D62B /* EmptySearchPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59169CD12BB09A9B0054D62B /* EmptySearchPlaceholderView.swift */; };
 		59169CD42BB0A94F0054D62B /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59169CD32BB0A94F0054D62B /* CategoryCell.swift */; };
+		59169CD92BB4A7F00054D62B /* EmojisAndColorsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59169CD82BB4A7F00054D62B /* EmojisAndColorsCell.swift */; };
+		59169CDB2BB4A8970054D62B /* EmojisAndColorsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59169CDA2BB4A8970054D62B /* EmojisAndColorsHeader.swift */; };
+		59169CDD2BB4AC410054D62B /* UITextFieldExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59169CDC2BB4AC410054D62B /* UITextFieldExtension.swift */; };
 		5943F27F2B795382004D80FF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5943F27E2B795382004D80FF /* AppDelegate.swift */; };
 		5943F2812B795382004D80FF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5943F2802B795382004D80FF /* SceneDelegate.swift */; };
 		5943F2882B79538C004D80FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5943F2872B79538C004D80FF /* Assets.xcassets */; };
@@ -47,6 +50,9 @@
 		59169CCF2BB067100054D62B /* NewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryViewController.swift; sourceTree = "<group>"; };
 		59169CD12BB09A9B0054D62B /* EmptySearchPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptySearchPlaceholderView.swift; sourceTree = "<group>"; };
 		59169CD32BB0A94F0054D62B /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
+		59169CD82BB4A7F00054D62B /* EmojisAndColorsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojisAndColorsCell.swift; sourceTree = "<group>"; };
+		59169CDA2BB4A8970054D62B /* EmojisAndColorsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojisAndColorsHeader.swift; sourceTree = "<group>"; };
+		59169CDC2BB4AC410054D62B /* UITextFieldExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextFieldExtension.swift; sourceTree = "<group>"; };
 		5943F27B2B795381004D80FF /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5943F27E2B795382004D80FF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5943F2802B795382004D80FF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -80,6 +86,7 @@
 		59169CB52BA75E520054D62B /* NewTracker */ = {
 			isa = PBXGroup;
 			children = (
+				59169CD72BB4A5FD0054D62B /* EmojisAndColors */,
 				59CDE8912B8A6F640036FE76 /* AddTrackerVewController.swift */,
 				59169CB32BA75E240054D62B /* ConfigureTrackerViewController.swift */,
 				59169CBB2BA8DFB00054D62B /* ActivityTableCell.swift */,
@@ -127,6 +134,15 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
+		59169CD72BB4A5FD0054D62B /* EmojisAndColors */ = {
+			isa = PBXGroup;
+			children = (
+				59169CD82BB4A7F00054D62B /* EmojisAndColorsCell.swift */,
+				59169CDA2BB4A8970054D62B /* EmojisAndColorsHeader.swift */,
+			);
+			path = EmojisAndColors;
+			sourceTree = "<group>";
+		};
 		5943F2722B795381004D80FF = {
 			isa = PBXGroup;
 			children = (
@@ -165,6 +181,7 @@
 			children = (
 				59CDE8972B9514C50036FE76 /* CollectionViewParameters.swift */,
 				5943F2952B7E9CC7004D80FF /* UIColor+Extensions.swift */,
+				59169CDC2BB4AC410054D62B /* UITextFieldExtension.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -271,6 +288,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				59169CBA2BA8C1D40054D62B /* TrackerCategory.swift in Sources */,
+				59169CDD2BB4AC410054D62B /* UITextFieldExtension.swift in Sources */,
+				59169CDB2BB4A8970054D62B /* EmojisAndColorsHeader.swift in Sources */,
 				59169CD22BB09A9B0054D62B /* EmptySearchPlaceholderView.swift in Sources */,
 				59CDE8942B8B752A0036FE76 /* DataManager.swift in Sources */,
 				59CDE85D2B8245980036FE76 /* TabBarController.swift in Sources */,
@@ -293,6 +312,7 @@
 				59169CB42BA75E240054D62B /* ConfigureTrackerViewController.swift in Sources */,
 				5943F2812B795382004D80FF /* SceneDelegate.swift in Sources */,
 				59CDE85C2B8245980036FE76 /* StatisticsViewController.swift in Sources */,
+				59169CD92BB4A7F00054D62B /* EmojisAndColorsCell.swift in Sources */,
 				59CDE8962B9501910036FE76 /* HeaderSectionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -22,6 +22,7 @@ final class NewCategoryViewController: UIViewController {
         textField.returnKeyType = .done
         textField.enablesReturnKeyAutomatically = true
         textField.smartInsertDeleteType = .no
+        textField.addLeftPadding(16)
         return textField
     }()
     
