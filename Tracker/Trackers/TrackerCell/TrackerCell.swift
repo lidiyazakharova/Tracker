@@ -82,6 +82,7 @@ final class TrackerCell: UICollectionViewCell {
             assertionFailure("no tracker id")
             return
         }
+        
         if isCompletedToday {
             delegate?.uncompletedTracker(id: trackerID, at: indexPath)
         } else {

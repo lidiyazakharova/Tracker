@@ -8,6 +8,8 @@ final class CategoryViewController: UIViewController {
     
     var delegate: CategoryViewControllerDelegate?
     
+    private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore.shared
+    
     // MARK: - Private Properties
     
     private lazy var emptyScreenImage: UIImageView = {
@@ -64,6 +66,14 @@ final class CategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        trackerCategoryStore.setDelegate(self)
+        
+        do {
+            trackerCategories = try trackerCategoryStore.getCategories()
+        } catch {
+            print("Get categories failed")
+        }
+        
         view.backgroundColor = .White
         
         setupNavBar()
@@ -79,7 +89,6 @@ final class CategoryViewController: UIViewController {
     
     @objc private func pushAddCategoryButton() {
         let newCategoryViewController = NewCategoryViewController()
-        newCategoryViewController.delegate = self
         let navigationController = UINavigationController(rootViewController: newCategoryViewController)
         present(navigationController, animated: true)
     }
@@ -91,7 +100,7 @@ final class CategoryViewController: UIViewController {
         navigationItem.title = "Категория"
     }
     
-    private func  addViews() {
+    private func addViews() {
         [label,
          emptyScreenImage,
          addCategoryButton,
@@ -146,14 +155,16 @@ final class CategoryViewController: UIViewController {
 }
 
 // MARK: - NewCategoryViewControllerDelegate
-extension CategoryViewController: NewCategoryViewControllerDelegate {
-    
-    func didCreateCategory(_ category: TrackerCategory) {
-        trackerCategories.append(category)
-        updateEmptyStateVisibility()
-        tableView.reloadData()
-    }
-    
+extension CategoryViewController: TrackerCategoryStoreDelegate {
+    func didUpdate(_ update: TrackerCategoryStoreUpdate) {
+        do {
+            trackerCategories = try trackerCategoryStore.getCategories()
+            updateEmptyStateVisibility()
+            tableView.reloadData()
+        } catch {
+            print("Update failed")
+        }
+    }    
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate

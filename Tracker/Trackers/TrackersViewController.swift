@@ -1,4 +1,5 @@
 import UIKit
+import CloudKit
 
 protocol TrackersViewControllerDelegate: AnyObject {
     func createdTracker(tracker: Tracker, categoryTitle: String)
@@ -30,7 +31,7 @@ final class TrackersViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-        
+    
     private lazy var datePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
@@ -115,7 +116,11 @@ final class TrackersViewController: UIViewController {
     private var filteredCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var currentDate: Date = .init()
-    private let dataManager = DataManager.shared
+    //    private let dataManager = DataManager.shared
+    
+    private let trackerStore: TrackerStoreProtocol = TrackerStore.shared
+    private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore.shared
+    private let trackerRecordStore: TrackerRecordStoreProtocol = TrackerRecordStore.shared
     
     //MARK: - Lifecycle
     
@@ -130,6 +135,8 @@ final class TrackersViewController: UIViewController {
         emptySearchPlaceholderView.configureEmptySearchPlaceholder()
         emptySearchPlaceholderView.isHidden = true
         addTapGestureToHideKeyboard()
+        
+        trackerStore.setDelegate(self)
     }
     
     
@@ -140,7 +147,36 @@ final class TrackersViewController: UIViewController {
     }
     
     private func reloadData() {
-        categories = dataManager.categories
+        //        categories = dataManager.categories
+        do {
+            categories = try trackerCategoryStore.getCategories()
+        } catch {
+            assertionFailure("Failed to get categories with \(error)")
+        }
+        
+        let trackers = categories.flatMap { category in
+            category.trackers
+        }
+        
+        let records = trackers.map { tracker -> [TrackerRecord] in
+            var records: [TrackerRecord] = []
+            
+            do {
+                records = try trackerRecordStore.recordsFetch(for: tracker)
+            } catch {
+                assertionFailure()
+            }
+            
+            return records
+        }
+        
+        completedTrackers = records.flatMap { $0 }
+        
+        
+//        .filter { tracker in
+//            tracker.date == currentDate
+//        }
+        
         filteredCategories = categories
         dateChanged()
     }
@@ -217,11 +253,11 @@ final class TrackersViewController: UIViewController {
         ])
     }
     
-    private func formattedDate(from date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yy"
-        return dateFormatter.string(from: date)
-    }
+    //    private func formattedDate(from date: Date) -> String {
+    //        let dateFormatter = DateFormatter()
+    //        dateFormatter.dateFormat = "dd.MM.yy"
+    //        return dateFormatter.string(from: date)
+    //    }
     
     
     @objc private func addTask() {
@@ -334,6 +370,7 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
         
         cell.delegate = self
         let isCompletedToday = isTrackerCompletedToday(id: tracker.id)
+        
         let completedDays = completedTrackers.filter {
             $0.trackerID == tracker.id
         }.count
@@ -348,11 +385,19 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
         return cell
     }
     
+    //    private func isTrackerCompletedToday(id: UUID) -> Bool {
+    //        completedTrackers.contains { trackerRecord in
+    //            isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
+    //        }
+    
     private func isTrackerCompletedToday(id: UUID) -> Bool {
-        completedTrackers.contains { trackerRecord in
-            isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
-            
+        completedTrackers.contains {
+            isMatchRecord(model: $0, with: id)
         }
+    }
+    
+    private func isMatchRecord(model: TrackerRecord, with trackerID: UUID) -> Bool {
+        return model.trackerID == trackerID && Calendar.current.isDate(model.date, inSameDayAs: currentDate)
     }
     
     private func isSameTrackerRecord(trackerRecord: TrackerRecord, id: UUID) -> Bool {
@@ -368,18 +413,31 @@ extension TrackersViewController: TrackerCellDelegate {
         guard currentDate <= Date() else {
             return
         }
-        let trackerRecord = TrackerRecord(trackerID: id, date: currentDate)
-        completedTrackers.append(trackerRecord)
-        collectionView.reloadItems(at: [indexPath])
+        
+        do {
+            try trackerRecordStore.addRecord(with: id, by: currentDate)
+            
+            let trackerRecord = TrackerRecord(trackerID: id, date: currentDate)
+            completedTrackers.append(trackerRecord)
+            collectionView.reloadItems(at: [indexPath])
+        } catch {
+            print("Complete task failed")
+        }
     }
     
     func uncompletedTracker(id: UUID, at indexPath: IndexPath) {
-        completedTrackers.removeAll { trackerRecord in
-            isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
-            let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: currentDate)
-            return trackerRecord.trackerID == id && isSameDay
+        do {
+            try trackerRecordStore.deleteRecord(with: id, by: currentDate)
+            
+            completedTrackers.removeAll { trackerRecord in
+                isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
+                let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: currentDate)
+                return trackerRecord.trackerID == id && isSameDay
+            }
+            collectionView.reloadItems(at: [indexPath])
+        } catch {
+            print("Remove task failed")
         }
-        collectionView.reloadItems(at: [indexPath])
     }
 }
 
@@ -412,7 +470,37 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
 extension TrackersViewController: AddTrackerViewControllerDelegate {
     func trackerDidCreate() {
-        collectionView.reloadData()
         reloadData()
+        collectionView.reloadData()
     }
 }
+
+// MARK: - TrackersViewControllerDelegate
+
+extension TrackersViewController: TrackersViewControllerDelegate {
+    
+    func createdTracker(tracker: Tracker, categoryTitle: String) {
+//        do {
+//            try trackerStore.addTracker(tracker, toCategory: TrackerCategory(categoryTitle: categoryTitle, trackers: []))
+//            categories.append(TrackerCategory(categoryTitle: categoryTitle, trackers: [tracker]))
+//            filteredCategories(for: currentDate)
+            reloadData()
+        collectionView.reloadData()
+//        } catch {
+//            print("Failed to add tracker to Core Data: \(error)")
+//        }
+    }
+}
+
+
+// MARK: - TrackerStoreDelegate
+
+extension TrackersViewController: TrackerStoreDelegate {
+    func trackerStoreDidUpdate(_ update: TrackerStoreUpdate) {
+        collectionView.performBatchUpdates {
+            collectionView.insertSections(update.insertedSections)
+            collectionView.insertItems(at: update.insertedIndexPaths)
+        }
+    }
+}
+

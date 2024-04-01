@@ -31,6 +31,7 @@ final class ConfigureTrackerViewController: UIViewController {
     var selectedColor: UIColor?
     var selectedColorIndex: Int?
     
+    private let trackerStore = TrackerStore.shared
     private let dataManager = DataManager.shared
     private var selectedSchedule: [Weekday] = []
     private var switchStates: [Int: Bool] = [:]
@@ -172,25 +173,34 @@ final class ConfigureTrackerViewController: UIViewController {
     
     @objc private func createButtonTapped() {
         guard let categoryTitle = selectedTrackerCategory?.title else { return }
+        guard let selectedEmoji = selectedEmoji else { return }
+        guard let selectedColor = selectedColor else { return }
+        
         if isRepeat {
-            dataManager.addTracker(
+            addTracker(
                 title: textField.text ?? "",
                 categoryTitle: categoryTitle,
-                schedule: selectedSchedule)
+                schedule: selectedSchedule,
+                emoji: selectedEmoji,
+                color: selectedColor
+            )
             
         } else {
-        let currentDate = Date()
-        let currentWeekday = Calendar.current.component(.weekday, from: currentDate)
-        let newSchedule = Schedule(value: Weekday(rawValue: currentWeekday) ?? .sunday, isOn: true)
-        let scheduleArray = [newSchedule]
-        let weekdayArray = scheduleArray.map { $0.value }
-          
-            dataManager.addTracker(
+            let currentDate = Date()
+            let currentWeekday = Calendar.current.component(.weekday, from: currentDate)
+            let newSchedule = Schedule(value: Weekday(rawValue: currentWeekday) ?? .sunday, isOn: true)
+            let scheduleArray = [newSchedule]
+            let weekdayArray = scheduleArray.map { $0.value }
+            
+            addTracker(
                 title: textField.text ?? "",
                 categoryTitle: categoryTitle,
-                schedule: weekdayArray)
+                schedule: weekdayArray,
+                emoji: selectedEmoji,
+                color: selectedColor
+            )
         }
-            
+        
         
         dismiss(animated: true, completion: { self.delegate?.trackerDidSaved() })
     }
@@ -291,6 +301,33 @@ final class ConfigureTrackerViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
+    }
+    
+    private func addTracker(
+        title: String,
+        categoryTitle: String,
+        schedule: [Weekday],
+        emoji: String,
+        color: UIColor
+    ) {
+        guard let selectedTrackerCategory = selectedTrackerCategory else { return }
+        
+        let tracker = Tracker(
+            id: UUID(),
+            title: title,
+            color: color,
+            emoji: emoji,
+            schedule: schedule
+        )
+        
+        do {
+            try trackerStore.addTracker(
+                tracker,
+                toCategory: selectedTrackerCategory
+            )
+        } catch {
+            print("Save tracker failed")
+        }
     }
 }
 
@@ -478,7 +515,7 @@ extension ConfigureTrackerViewController: UICollectionViewDelegateFlowLayout {
             let cell = collectionView.cellForItem(at: indexPath) as! EmojisAndColorsCell
             cell.layer.cornerRadius = 16
             cell.layer.masksToBounds = true
-            cell.backgroundColor = .lightGray
+            cell.backgroundColor = .LightGray
             selectedEmoji = emojis[indexPath.row]
             selectedEmojiIndex = indexPath.row
         } else if indexPath.section == 1 {

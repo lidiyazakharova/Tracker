@@ -37,4 +37,24 @@ enum Weekday: Int, CaseIterable {
         case .sunday: return "Вс"
         }
     }
+    
+    static func calculateScheduleValue(for schedule: [Weekday]) -> Int32 {
+        var scheduleValue: Int32 = 0
+        for day in schedule {
+            let dayRawValue = Int32 (1 << day.rawValue)
+            scheduleValue |= dayRawValue
+        }
+        return scheduleValue
+    }
+    
+   static func calculateScheduleArray(from value: Int32) -> [Weekday] {
+        var schedule: [Weekday] = []
+        for day in Weekday.allCases {
+            if value & (1 << day.rawValue) != 0 {
+                schedule.append(day)
+            }
+        }
+        return schedule
+    }
+    
 }
