@@ -102,8 +102,7 @@ final class TrackersViewController: UIViewController {
     private let placeholderView = PlaceholderView()
     private let emptySearchPlaceholderView = EmptySearchPlaceholderView()
     
-    private var collectionView = UICollectionView(frame: .zero,
-                                                  collectionViewLayout: UICollectionViewFlowLayout())
+    private var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
     private let params = GeometricParams(
         cellCount: 2,
@@ -316,7 +315,14 @@ final class TrackersViewController: UIViewController {
     }
     
     private func reloadPlaceholder() {
-        placeholderView.isHidden = !categories.isEmpty || !(searchTextField.text ?? "").isEmpty
+        placeholderView.isHidden = check() || !(searchTextField.text ?? "").isEmpty
+    }
+    
+    private func check() -> Bool {
+        return categories.contains(where: { category in
+            !category.trackers.isEmpty
+        })
+        
     }
     
     private func addTapGestureToHideKeyboard() {

@@ -103,7 +103,7 @@ final class ConfigureTrackerViewController: UIViewController {
         return createButton
     }()
     
-    lazy var emojisAndColorsCollectionView: UICollectionView = {
+    private lazy var emojisAndColorsCollectionView: UICollectionView = {
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: UICollectionViewFlowLayout()
@@ -115,18 +115,25 @@ final class ConfigureTrackerViewController: UIViewController {
         collectionView.register(EmojisAndColorsHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: EmojisAndColorsHeaderView.reuseIdentifier)
         return collectionView
     }()
-//
-//    lazy var scrollView: UIScrollView = {
-//        let scrollView = UIScrollView()
-//        scrollView.translatesAutoresizingMaskIntoConstraints = false
-//        return scrollView
-//    }()
-//
-//    lazy var contentView: UIView = {
-//        let view = UIView()
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        return view
-//    }()
+    
+   private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.contentSize = contentSize
+        scrollView.frame = view.bounds
+        return scrollView
+    }()
+    
+      private lazy var contentView: UIView = {
+            let contentView = UIView()
+            contentView.translatesAutoresizingMaskIntoConstraints = false
+            contentView.frame.size = contentSize
+            return contentView
+        }()
+    
+    private var contentSize: CGSize {
+        CGSize(width: view.frame.width, height: view.frame.height + 200)
+    }
     
     
     //MARK: - Lifecycle
@@ -135,23 +142,25 @@ final class ConfigureTrackerViewController: UIViewController {
         super.viewDidLoad()
         setupNavBar()
         view.backgroundColor = .White
-//        view.addSubview(scrollView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        [textField,
+         tableView,
+         emojisAndColorsCollectionView,
+         stackView
+        ].forEach { scrollView.addSubview($0) }
+                
+        //        view.addSubview(contentView)
+        //        view.addSubview(textField)
+        //        view.addSubview(tableView)
         
-//        view.addSubview(contentView)
-        view.addSubview(textField)
-        view.addSubview(tableView)
+        //
         
-//        [textField,
-//         tableView,
-//         emojisAndColorsCollectionView,
-//         stackView
-//        ].forEach { scrollView.addSubview($0) }
-        
-        view.addSubview(emojisAndColorsCollectionView)
-        view.addSubview(stackView)
+//        view.addSubview(emojisAndColorsCollectionView)
+//        view.addSubview(stackView)
         stackView.addArrangedSubview(cancelButton)
         stackView.addArrangedSubview(createButton)
-//        scrollView.addSubview(emojisAndColorsCollectionView)
+        //        scrollView.addSubview(emojisAndColorsCollectionView)
         
         setupConstraints()
         
@@ -227,57 +236,57 @@ final class ConfigureTrackerViewController: UIViewController {
         }
         
         NSLayoutConstraint.activate([
-//            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-//            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-//            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-//            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-//            contentView.widthAnchor.constraint(equalTo: view.widthAnchor),
+           scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            contentView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            
+            textField.heightAnchor.constraint(equalToConstant: 75),
+            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            textField.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 24),
+            
+            tableView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
+            tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
+            
+            emojisAndColorsCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
+            emojisAndColorsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            emojisAndColorsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            emojisAndColorsCollectionView.heightAnchor.constraint(equalToConstant: 460),
+            
+            stackView.heightAnchor.constraint(equalToConstant: 60),
+            stackView.topAnchor.constraint(equalTo: emojisAndColorsCollectionView.bottomAnchor, constant: 16),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -24)
 //
-//            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-//            contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-//            contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-//            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-//
+//            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+//            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+//            stackView.heightAnchor.constraint(equalToConstant: 60),
+//            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
 //            textField.heightAnchor.constraint(equalToConstant: 75),
-//            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-//            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-//            textField.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 24),
+//            textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+//            textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+//            textField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
 //
 //            tableView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
 //            tableView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
 //            tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
 //
 //            emojisAndColorsCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
-//            emojisAndColorsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-//            emojisAndColorsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-//            emojisAndColorsCollectionView.heightAnchor.constraint(equalToConstant: 460),
-//
-//            stackView.heightAnchor.constraint(equalToConstant: 60),
-//            stackView.topAnchor.constraint(equalTo: emojisAndColorsCollectionView.bottomAnchor, constant: 16),
-//            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-//            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-//            stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -24)
-            
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            stackView.heightAnchor.constraint(equalToConstant: 60),
-            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-
-            textField.heightAnchor.constraint(equalToConstant: 75),
-            textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            textField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-
-            tableView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
-
-            emojisAndColorsCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
-            emojisAndColorsCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            emojisAndColorsCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            emojisAndColorsCollectionView.heightAnchor.constraint(equalToConstant: 476),
+//            emojisAndColorsCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+//            emojisAndColorsCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+//            emojisAndColorsCollectionView.heightAnchor.constraint(equalToConstant: 476),
         ])
-//        scrollView.contentSize = CGSize(width: view.frame.width, height: view.frame.height + 105)
+                
     }
     
     private func checkButtonActivation() {
