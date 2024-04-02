@@ -115,7 +115,6 @@ final class TrackersViewController: UIViewController {
     private var filteredCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var currentDate: Date = .init()
-    //    private let dataManager = DataManager.shared
     
     private let trackerStore: TrackerStoreProtocol = TrackerStore.shared
     private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore.shared
@@ -146,7 +145,6 @@ final class TrackersViewController: UIViewController {
     }
     
     private func reloadData() {
-        //        categories = dataManager.categories
         do {
             categories = try trackerCategoryStore.getCategories()
         } catch {
@@ -170,12 +168,6 @@ final class TrackersViewController: UIViewController {
         }
         
         completedTrackers = records.flatMap { $0 }
-        
-        
-//        .filter { tracker in
-//            tracker.date == currentDate
-//        }
-        
         filteredCategories = categories
         dateChanged()
     }
@@ -251,13 +243,6 @@ final class TrackersViewController: UIViewController {
             cancelButton.trailingAnchor.constraint(equalTo: searchStackView.trailingAnchor)
         ])
     }
-    
-    //    private func formattedDate(from date: Date) -> String {
-    //        let dateFormatter = DateFormatter()
-    //        dateFormatter.dateFormat = "dd.MM.yy"
-    //        return dateFormatter.string(from: date)
-    //    }
-    
     
     @objc private func addTask() {
         let createTrackerVC = AddTrackerViewController()
@@ -352,7 +337,7 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderSectionView.identifier, for: indexPath) as? HeaderSectionView else { return UICollectionReusableView() }//check
+        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderSectionView.identifier, for: indexPath) as? HeaderSectionView else { return UICollectionReusableView() }
         
         let titleCategory = filteredCategories[indexPath.section].title
         view.configure(titleCategory)
@@ -390,11 +375,6 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
         
         return cell
     }
-    
-    //    private func isTrackerCompletedToday(id: UUID) -> Bool {
-    //        completedTrackers.contains { trackerRecord in
-    //            isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
-    //        }
     
     private func isTrackerCompletedToday(id: UUID) -> Bool {
         completedTrackers.contains {
@@ -486,15 +466,8 @@ extension TrackersViewController: AddTrackerViewControllerDelegate {
 extension TrackersViewController: TrackersViewControllerDelegate {
     
     func createdTracker(tracker: Tracker, categoryTitle: String) {
-//        do {
-//            try trackerStore.addTracker(tracker, toCategory: TrackerCategory(categoryTitle: categoryTitle, trackers: []))
-//            categories.append(TrackerCategory(categoryTitle: categoryTitle, trackers: [tracker]))
-//            filteredCategories(for: currentDate)
-            reloadData()
+        reloadData()
         collectionView.reloadData()
-//        } catch {
-//            print("Failed to add tracker to Core Data: \(error)")
-//        }
     }
 }
 

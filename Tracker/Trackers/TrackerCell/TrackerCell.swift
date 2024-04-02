@@ -15,8 +15,6 @@ final class TrackerCell: UICollectionViewCell {
     
     //MARK: - Private Properties
     
-    private let dataManager = DataManager.shared
-    
     private let mainView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16

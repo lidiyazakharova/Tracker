@@ -145,27 +145,6 @@ final class TrackerCategoryStore: NSObject {
     }
 }
 
-// MARK: - TrackerCategoryStoreProtocol
-
-extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
-    
-    func setDelegate(_ delegate: TrackerCategoryStoreDelegate) {
-        self.delegate = delegate
-    }
-    
-    func getCategories() throws -> [TrackerCategory] {
-        try fetchCategories()
-    }
-    
-    func fetchCategoryCoreData(for category: TrackerCategory) throws -> TrackerCategoryCoreData {
-        try fetchTrackerCategoryCoreData(for: category)
-    }
-    
-    func addCategory(_ category: TrackerCategory) throws {
-        try addNewCategory(category)
-    }
-}
-
 // MARK: - NSFetchedResultsControllerDelegate
 
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
@@ -199,6 +178,27 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         default:
             break
         }
+    }
+}
+
+// MARK: - TrackerCategoryStoreProtocol
+
+extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
+    
+    func setDelegate(_ delegate: TrackerCategoryStoreDelegate) {
+        self.delegate = delegate
+    }
+    
+    func getCategories() throws -> [TrackerCategory] {
+        try fetchCategories()
+    }
+    
+    func fetchCategoryCoreData(for category: TrackerCategory) throws -> TrackerCategoryCoreData {
+        try fetchTrackerCategoryCoreData(for: category)
+    }
+    
+    func addCategory(_ category: TrackerCategory) throws {
+        try addNewCategory(category)
     }
 }
 

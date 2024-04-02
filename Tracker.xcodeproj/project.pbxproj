@@ -37,7 +37,6 @@
 		59CDE8892B89134A0036FE76 /* TrackerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CDE8882B89134A0036FE76 /* TrackerCell.swift */; };
 		59CDE8902B8A23630036FE76 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CDE88F2B8A23630036FE76 /* TrackersViewController.swift */; };
 		59CDE8922B8A6F640036FE76 /* AddTrackerVewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CDE8912B8A6F640036FE76 /* AddTrackerVewController.swift */; };
-		59CDE8942B8B752A0036FE76 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CDE8932B8B752A0036FE76 /* DataManager.swift */; };
 		59CDE8962B9501910036FE76 /* HeaderSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CDE8952B9501910036FE76 /* HeaderSectionView.swift */; };
 		59CDE8982B9514C50036FE76 /* CollectionViewParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CDE8972B9514C50036FE76 /* CollectionViewParameters.swift */; };
 		59CDE89A2B95188E0036FE76 /* PlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CDE8992B95188E0036FE76 /* PlaceholderView.swift */; };
@@ -76,7 +75,6 @@
 		59CDE8882B89134A0036FE76 /* TrackerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCell.swift; sourceTree = "<group>"; };
 		59CDE88F2B8A23630036FE76 /* TrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewController.swift; sourceTree = "<group>"; };
 		59CDE8912B8A6F640036FE76 /* AddTrackerVewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTrackerVewController.swift; sourceTree = "<group>"; };
-		59CDE8932B8B752A0036FE76 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		59CDE8952B9501910036FE76 /* HeaderSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderSectionView.swift; sourceTree = "<group>"; };
 		59CDE8972B9514C50036FE76 /* CollectionViewParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewParameters.swift; sourceTree = "<group>"; };
 		59CDE8992B95188E0036FE76 /* PlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderView.swift; sourceTree = "<group>"; };
@@ -190,7 +188,6 @@
 				59CDE88D2B891C990036FE76 /* TabBar */,
 				59CDE88E2B891CB80036FE76 /* Statistics */,
 				59CDE88A2B891BE50036FE76 /* Trackers */,
-				59CDE8932B8B752A0036FE76 /* DataManager.swift */,
 				5943F2942B7E9C91004D80FF /* Helpers */,
 				5943F2872B79538C004D80FF /* Assets.xcassets */,
 				5943F2892B79538C004D80FF /* LaunchScreen.storyboard */,
@@ -316,7 +313,6 @@
 				59169CDB2BB4A8970054D62B /* EmojisAndColorsHeader.swift in Sources */,
 				59169CD22BB09A9B0054D62B /* EmptySearchPlaceholderView.swift in Sources */,
 				59169CE32BB992FA0054D62B /* TrackerStore.swift in Sources */,
-				59CDE8942B8B752A0036FE76 /* DataManager.swift in Sources */,
 				59CDE85D2B8245980036FE76 /* TabBarController.swift in Sources */,
 				5943F2962B7E9CC7004D80FF /* UIColor+Extensions.swift in Sources */,
 				59CDE8982B9514C50036FE76 /* CollectionViewParameters.swift in Sources */,

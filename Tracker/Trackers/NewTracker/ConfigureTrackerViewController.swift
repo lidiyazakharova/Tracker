@@ -32,7 +32,6 @@ final class ConfigureTrackerViewController: UIViewController {
     var selectedColorIndex: Int?
     
     private let trackerStore = TrackerStore.shared
-    private let dataManager = DataManager.shared
     private var selectedSchedule: [Weekday] = []
     private var switchStates: [Int: Bool] = [:]
     private var selectedTrackerCategory: TrackerCategory?
@@ -116,7 +115,7 @@ final class ConfigureTrackerViewController: UIViewController {
         return collectionView
     }()
     
-   private lazy var scrollView: UIScrollView = {
+    private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.contentSize = contentSize
@@ -124,12 +123,12 @@ final class ConfigureTrackerViewController: UIViewController {
         return scrollView
     }()
     
-      private lazy var contentView: UIView = {
-            let contentView = UIView()
-            contentView.translatesAutoresizingMaskIntoConstraints = false
-            contentView.frame.size = contentSize
-            return contentView
-        }()
+    private lazy var contentView: UIView = {
+        let contentView = UIView()
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.frame.size = contentSize
+        return contentView
+    }()
     
     private var contentSize: CGSize {
         CGSize(width: view.frame.width, height: view.frame.height + 200)
@@ -149,18 +148,9 @@ final class ConfigureTrackerViewController: UIViewController {
          emojisAndColorsCollectionView,
          stackView
         ].forEach { scrollView.addSubview($0) }
-                
-        //        view.addSubview(contentView)
-        //        view.addSubview(textField)
-        //        view.addSubview(tableView)
         
-        //
-        
-//        view.addSubview(emojisAndColorsCollectionView)
-//        view.addSubview(stackView)
         stackView.addArrangedSubview(cancelButton)
         stackView.addArrangedSubview(createButton)
-        //        scrollView.addSubview(emojisAndColorsCollectionView)
         
         setupConstraints()
         
@@ -170,7 +160,6 @@ final class ConfigureTrackerViewController: UIViewController {
         emojisAndColorsCollectionView.delegate = self
         
         addTapGestureToHideKeyboard()
-        
         checkButtonActivation()
     }
     
@@ -236,7 +225,7 @@ final class ConfigureTrackerViewController: UIViewController {
         }
         
         NSLayoutConstraint.activate([
-           scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -266,27 +255,8 @@ final class ConfigureTrackerViewController: UIViewController {
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -24)
-//
-//            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-//            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-//            stackView.heightAnchor.constraint(equalToConstant: 60),
-//            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            
-//            textField.heightAnchor.constraint(equalToConstant: 75),
-//            textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-//            textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-//            textField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-//
-//            tableView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
-//            tableView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
-//            tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
-//
-//            emojisAndColorsCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
-//            emojisAndColorsCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-//            emojisAndColorsCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-//            emojisAndColorsCollectionView.heightAnchor.constraint(equalToConstant: 476),
         ])
-                
+        
     }
     
     private func checkButtonActivation() {
