@@ -44,8 +44,9 @@ final class TrackerStore: NSObject {
     private let uiColorMarshalling = UIColorMarshalling()
     
     private lazy var trackerCategoryStore: TrackerCategoryStoreProtocol = {
-        TrackerCategoryStore(context: context)
+        TrackerCategoryStore.shared
     }()
+    
     private let context: NSManagedObjectContext
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = TrackerCoreData.fetchRequest()
@@ -68,12 +69,13 @@ final class TrackerStore: NSObject {
     
     // MARK: - Init
     
-    convenience override init() {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    private convenience override init() {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("UIApplication is not AppDelegate") }
+        let context = appDelegate.persistentContainer.viewContext
         self.init(context: context)
     }
     
-    init(context: NSManagedObjectContext) {
+    private init(context: NSManagedObjectContext) {
         self.context = context
     }
     

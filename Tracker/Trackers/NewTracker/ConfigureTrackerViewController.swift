@@ -134,6 +134,10 @@ final class ConfigureTrackerViewController: UIViewController {
         CGSize(width: view.frame.width, height: view.frame.height + 200)
     }
     
+    private enum CollectionViewSections: Int, CaseIterable {
+        case emojiSection = 0
+        case colorSection = 1
+    }
     
     //MARK: - Lifecycle
     
@@ -323,7 +327,7 @@ extension ConfigureTrackerViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ActivityTableCell.reuseIdentifier, for: indexPath) as! ActivityTableCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ActivityTableCell.reuseIdentifier, for: indexPath) as? ActivityTableCell else { return UITableViewCell() }
         cell.accessoryType = .disclosureIndicator
         cell.backgroundColor = .LightGray.withAlphaComponent(0.3)
         if indexPath.row == 0 {
@@ -408,23 +412,30 @@ extension ConfigureTrackerViewController: CategoryViewControllerDelegate {
 
 extension ConfigureTrackerViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if section == 0 {
+        
+        switch section {
+        case CollectionViewSections.emojiSection.rawValue:
             return emojis.count
-        } else if section == 1 {
+        case CollectionViewSections.colorSection.rawValue:
             return colors.count
+        default:
+            return 0
         }
-        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojisAndColorsCell.reuseIdentifier, for: indexPath) as! EmojisAndColorsCell
         
-        if indexPath.section == 0 {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojisAndColorsCell.reuseIdentifier, for: indexPath) as? EmojisAndColorsCell else { return UICollectionViewCell() }
+        
+        switch indexPath.section {
+        case CollectionViewSections.emojiSection.rawValue:
             let emoji = emojis[indexPath.row]
             cell.titleLabel.text = emoji
-        } else if indexPath.section == 1 {
+        case CollectionViewSections.colorSection.rawValue:
             let color = colors[indexPath.row]
             cell.titleLabel.backgroundColor = color
+        default:
+            break
         }
         
         cell.titleLabel.font = UIFont.systemFont(ofSize: 32, weight: .bold)
@@ -437,17 +448,22 @@ extension ConfigureTrackerViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let view = collectionView.dequeueReusableSupplementaryView(
+        guard let view = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
             withReuseIdentifier: EmojisAndColorsHeaderView.reuseIdentifier,
             for: indexPath
-        ) as! EmojisAndColorsHeaderView
-        if indexPath.section == 0 {
+        ) as? EmojisAndColorsHeaderView else { return UICollectionReusableView() }
+        
+        switch indexPath.section {
+        case CollectionViewSections.emojiSection.rawValue:
             view.titleLabel.text = "Emoji"
-        } else if indexPath.section == 1 {
+        case CollectionViewSections.colorSection.rawValue:
             view.titleLabel.text = "Цвет"
+        default:
+            return UICollectionReusableView()
         }
         return view
+        
     }
 }
 
@@ -484,20 +500,19 @@ extension ConfigureTrackerViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.section == 0 {
+        
+        switch indexPath.section {
+            
+        case CollectionViewSections.emojiSection.rawValue:
             if let selectedEmojiIndex = selectedEmojiIndex {
                 let previousSelectedIndexPath = IndexPath(item: selectedEmojiIndex, section: 0)
                 if let cell = collectionView.cellForItem(at: previousSelectedIndexPath) as? EmojisAndColorsCell {
                     cell.backgroundColor = .clear
                 }
             }
-            let cell = collectionView.cellForItem(at: indexPath) as! EmojisAndColorsCell
-            cell.layer.cornerRadius = 16
-            cell.layer.masksToBounds = true
-            cell.backgroundColor = .LightGray
-            selectedEmoji = emojis[indexPath.row]
-            selectedEmojiIndex = indexPath.row
-        } else if indexPath.section == 1 {
+            setEmojiHighlight(indexPath, collectionView)
+            
+        case CollectionViewSections.colorSection.rawValue:
             if let selectedColorIndex = selectedColorIndex {
                 let previousSelectedIndexPath = IndexPath(item: selectedColorIndex, section: 1)
                 if let cell = collectionView.cellForItem(at: previousSelectedIndexPath) as? EmojisAndColorsCell {
@@ -505,14 +520,30 @@ extension ConfigureTrackerViewController: UICollectionViewDelegateFlowLayout {
                     cell.layer.borderWidth = 0
                 }
             }
-            let cell = collectionView.cellForItem(at: indexPath) as! EmojisAndColorsCell
-            cell.layer.cornerRadius = 8
-            cell.layer.masksToBounds = true
-            cell.layer.borderColor = colors[indexPath.row].cgColor.copy(alpha: 0.3)
-            cell.layer.borderWidth = 3
-            selectedColor = colors[indexPath.row]
-            selectedColorIndex = indexPath.row
+            setColorHighlight(indexPath, collectionView)
+            
+        default:
+            return
         }
         checkButtonActivation()
+    }
+    
+    func setEmojiHighlight(_ indexPath: IndexPath, _ collectionView: UICollectionView) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? EmojisAndColorsCell else { return }
+        cell.layer.cornerRadius = 16
+        cell.layer.masksToBounds = true
+        cell.backgroundColor = .LightGray
+        selectedEmoji = emojis[indexPath.row]
+        selectedEmojiIndex = indexPath.row
+    }
+    
+    func setColorHighlight(_ indexPath: IndexPath, _ collectionView: UICollectionView) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? EmojisAndColorsCell else { return }
+        cell.layer.cornerRadius = 8
+        cell.layer.masksToBounds = true
+        cell.layer.borderColor = colors[indexPath.row].cgColor.copy(alpha: 0.3)
+        cell.layer.borderWidth = 3
+        selectedColor = colors[indexPath.row]
+        selectedColorIndex = indexPath.row
     }
 }
