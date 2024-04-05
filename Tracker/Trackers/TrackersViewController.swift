@@ -1,4 +1,5 @@
 import UIKit
+import CloudKit
 
 protocol TrackersViewControllerDelegate: AnyObject {
     func createdTracker(tracker: Tracker, categoryTitle: String)
@@ -30,7 +31,7 @@ final class TrackersViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-        
+    
     private lazy var datePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
@@ -101,8 +102,7 @@ final class TrackersViewController: UIViewController {
     private let placeholderView = PlaceholderView()
     private let emptySearchPlaceholderView = EmptySearchPlaceholderView()
     
-    private var collectionView = UICollectionView(frame: .zero,
-                                                  collectionViewLayout: UICollectionViewFlowLayout())
+    private var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
     private let params = GeometricParams(
         cellCount: 2,
@@ -115,7 +115,10 @@ final class TrackersViewController: UIViewController {
     private var filteredCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var currentDate: Date = .init()
-    private let dataManager = DataManager.shared
+    
+    private let trackerStore: TrackerStoreProtocol = TrackerStore.shared
+    private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore.shared
+    private let trackerRecordStore: TrackerRecordStoreProtocol = TrackerRecordStore.shared
     
     //MARK: - Lifecycle
     
@@ -130,6 +133,8 @@ final class TrackersViewController: UIViewController {
         emptySearchPlaceholderView.configureEmptySearchPlaceholder()
         emptySearchPlaceholderView.isHidden = true
         addTapGestureToHideKeyboard()
+        
+        trackerStore.setDelegate(self)
     }
     
     
@@ -140,7 +145,29 @@ final class TrackersViewController: UIViewController {
     }
     
     private func reloadData() {
-        categories = dataManager.categories
+        do {
+            categories = try trackerCategoryStore.getCategories()
+        } catch {
+            assertionFailure("Failed to get categories with \(error)")
+        }
+        
+        let trackers = categories.flatMap { category in
+            category.trackers
+        }
+        
+        let records = trackers.map { tracker -> [TrackerRecord] in
+            var records: [TrackerRecord] = []
+            
+            do {
+                records = try trackerRecordStore.recordsFetch(for: tracker)
+            } catch {
+                assertionFailure()
+            }
+            
+            return records
+        }
+        
+        completedTrackers = records.flatMap { $0 }
         filteredCategories = categories
         dateChanged()
     }
@@ -217,13 +244,6 @@ final class TrackersViewController: UIViewController {
         ])
     }
     
-    private func formattedDate(from date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yy"
-        return dateFormatter.string(from: date)
-    }
-    
-    
     @objc private func addTask() {
         let createTrackerVC = AddTrackerViewController()
         createTrackerVC.delegate = self
@@ -280,7 +300,14 @@ final class TrackersViewController: UIViewController {
     }
     
     private func reloadPlaceholder() {
-        placeholderView.isHidden = !categories.isEmpty || !(searchTextField.text ?? "").isEmpty
+        placeholderView.isHidden = check() || !(searchTextField.text ?? "").isEmpty
+    }
+    
+    private func check() -> Bool {
+        return categories.contains(where: { category in
+            !category.trackers.isEmpty
+        })
+        
     }
     
     private func addTapGestureToHideKeyboard() {
@@ -310,7 +337,7 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderSectionView.identifier, for: indexPath) as? HeaderSectionView else { return UICollectionReusableView() }//check
+        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderSectionView.identifier, for: indexPath) as? HeaderSectionView else { return UICollectionReusableView() }
         
         let titleCategory = filteredCategories[indexPath.section].title
         view.configure(titleCategory)
@@ -334,6 +361,7 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
         
         cell.delegate = self
         let isCompletedToday = isTrackerCompletedToday(id: tracker.id)
+        
         let completedDays = completedTrackers.filter {
             $0.trackerID == tracker.id
         }.count
@@ -349,10 +377,13 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
     }
     
     private func isTrackerCompletedToday(id: UUID) -> Bool {
-        completedTrackers.contains { trackerRecord in
-            isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
-            
+        completedTrackers.contains {
+            isMatchRecord(model: $0, with: id)
         }
+    }
+    
+    private func isMatchRecord(model: TrackerRecord, with trackerID: UUID) -> Bool {
+        return model.trackerID == trackerID && Calendar.current.isDate(model.date, inSameDayAs: currentDate)
     }
     
     private func isSameTrackerRecord(trackerRecord: TrackerRecord, id: UUID) -> Bool {
@@ -368,18 +399,31 @@ extension TrackersViewController: TrackerCellDelegate {
         guard currentDate <= Date() else {
             return
         }
-        let trackerRecord = TrackerRecord(trackerID: id, date: currentDate)
-        completedTrackers.append(trackerRecord)
-        collectionView.reloadItems(at: [indexPath])
+        
+        do {
+            try trackerRecordStore.addRecord(with: id, by: currentDate)
+            
+            let trackerRecord = TrackerRecord(trackerID: id, date: currentDate)
+            completedTrackers.append(trackerRecord)
+            collectionView.reloadItems(at: [indexPath])
+        } catch {
+            print("Complete task failed")
+        }
     }
     
     func uncompletedTracker(id: UUID, at indexPath: IndexPath) {
-        completedTrackers.removeAll { trackerRecord in
-            isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
-            let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: currentDate)
-            return trackerRecord.trackerID == id && isSameDay
+        do {
+            try trackerRecordStore.deleteRecord(with: id, by: currentDate)
+            
+            completedTrackers.removeAll { trackerRecord in
+                isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
+                let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: currentDate)
+                return trackerRecord.trackerID == id && isSameDay
+            }
+            collectionView.reloadItems(at: [indexPath])
+        } catch {
+            print("Remove task failed")
         }
-        collectionView.reloadItems(at: [indexPath])
     }
 }
 
@@ -412,7 +456,30 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
 extension TrackersViewController: AddTrackerViewControllerDelegate {
     func trackerDidCreate() {
-        collectionView.reloadData()
         reloadData()
+        collectionView.reloadData()
     }
 }
+
+// MARK: - TrackersViewControllerDelegate
+
+extension TrackersViewController: TrackersViewControllerDelegate {
+    
+    func createdTracker(tracker: Tracker, categoryTitle: String) {
+        reloadData()
+        collectionView.reloadData()
+    }
+}
+
+
+// MARK: - TrackerStoreDelegate
+
+extension TrackersViewController: TrackerStoreDelegate {
+    func trackerStoreDidUpdate(_ update: TrackerStoreUpdate) {
+        collectionView.performBatchUpdates {
+            collectionView.insertSections(update.insertedSections)
+            collectionView.insertItems(at: update.insertedIndexPaths)
+        }
+    }
+}
+

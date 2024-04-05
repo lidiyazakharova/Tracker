@@ -36,7 +36,7 @@ final class ScheduleViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.setTitle("Готово", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.White, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         return button
@@ -47,7 +47,7 @@ final class ScheduleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .White
         navigationItem.hidesBackButton = true
         setupNavBar()
         setupView()
