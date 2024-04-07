@@ -54,10 +54,8 @@ final class NewCategoryViewController: UIViewController {
         if let text = textField.text, !text.isEmpty {
             let category = TrackerCategory(title: text, trackers: [])
             
-            // СОХРАНЯЕМ КАТЕГОРИЮ
             do {
                 try trackerCategoryStore.addCategory(category)
-                print(category) // Удалить
             } catch {
                 print("Save category failed")
             }

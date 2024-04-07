@@ -27,10 +27,6 @@ final class CategoryViewModel {
         }
     }
     
-//    func createCategory(_ newCategory: TrackerCategory) {
-//        try? trackerCategoryStore.createCategory(newCategory)
-//    }
-//
     func countCategories() -> Int {
         return trackerCategories.count
     }
@@ -46,8 +42,6 @@ final class CategoryViewModel {
         
         onCategorySelected?(selectedCategory)
     }
-//    trackerCategories[indexPath.row].title
-
 }
 
 // MARK: - TrackerCategoryStoreDelegate

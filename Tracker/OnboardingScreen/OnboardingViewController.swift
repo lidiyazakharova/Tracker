@@ -35,7 +35,7 @@ final class OnboardingViewController: UIPageViewController {
         return button
     }()
     
-    // MARK: - UIPageViewController Lifecycle
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,10 +46,8 @@ final class OnboardingViewController: UIPageViewController {
         
         setupConstraints()
         setupInitialViewController()
-        
-       
     }
-  
+    
     // MARK: - Init
     override init(
         transitionStyle style: UIPageViewController.TransitionStyle,
@@ -107,9 +105,12 @@ final class OnboardingViewController: UIPageViewController {
 extension OnboardingViewController: UIPageViewControllerDataSource {
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = pages.firstIndex(of: viewController as! OnboardingPageViewController) else {
+        
+        guard let viewController = viewController as? OnboardingPageViewController else { return nil }
+        
+        guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
             return nil
-        } // need change force
+        }
         let previousIndex = viewControllerIndex - 1
         guard previousIndex >= 0 else {
             return pages.last
@@ -118,9 +119,10 @@ extension OnboardingViewController: UIPageViewControllerDataSource {
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = pages.firstIndex(of: viewController as! OnboardingPageViewController) else {
+        guard let viewController = viewController as? OnboardingPageViewController else { return nil }
+        guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
             return nil
-        } // need change force
+        }
         let nextIndex = viewControllerIndex + 1
         guard nextIndex < pages.count else {
             return pages.first
@@ -132,11 +134,11 @@ extension OnboardingViewController: UIPageViewControllerDataSource {
 // MARK: - UIPageViewControllerDelegate
 
 extension OnboardingViewController: UIPageViewControllerDelegate {
-
+    
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if let currentViewController = pageViewController.viewControllers?.first as? OnboardingPageViewController,
            let currentIndex = pages.firstIndex(of: currentViewController) {
             pageControl.currentPage = currentIndex
-        } // need change force
+        }
     }
 }
