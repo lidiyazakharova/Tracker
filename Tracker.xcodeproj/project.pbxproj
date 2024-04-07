@@ -28,6 +28,7 @@
 		59169CE92BB9947B0054D62B /* UIColorMarshalling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59169CE82BB9947B0054D62B /* UIColorMarshalling.swift */; };
 		59169CEC2BBDF3F40054D62B /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59169CEB2BBDF3F40054D62B /* OnboardingViewController.swift */; };
 		59169CEE2BBDF5E10054D62B /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59169CED2BBDF5E10054D62B /* OnboardingPageViewController.swift */; };
+		59169CF02BC09BAB0054D62B /* CategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59169CEF2BC09BAB0054D62B /* CategoryViewModel.swift */; };
 		5943F27F2B795382004D80FF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5943F27E2B795382004D80FF /* AppDelegate.swift */; };
 		5943F2812B795382004D80FF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5943F2802B795382004D80FF /* SceneDelegate.swift */; };
 		5943F2882B79538C004D80FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5943F2872B79538C004D80FF /* Assets.xcassets */; };
@@ -66,6 +67,7 @@
 		59169CE82BB9947B0054D62B /* UIColorMarshalling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorMarshalling.swift; sourceTree = "<group>"; };
 		59169CEB2BBDF3F40054D62B /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		59169CED2BBDF5E10054D62B /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
+		59169CEF2BC09BAB0054D62B /* CategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewModel.swift; sourceTree = "<group>"; };
 		5943F27B2B795381004D80FF /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5943F27E2B795382004D80FF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5943F2802B795382004D80FF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 			isa = PBXGroup;
 			children = (
 				59169CCD2BAF5E6C0054D62B /* CategoryViewController.swift */,
+				59169CEF2BC09BAB0054D62B /* CategoryViewModel.swift */,
 				59169CCF2BB067100054D62B /* NewCategoryViewController.swift */,
 				59169CD32BB0A94F0054D62B /* CategoryCell.swift */,
 			);
@@ -347,6 +350,7 @@
 				5943F27F2B795382004D80FF /* AppDelegate.swift in Sources */,
 				59169CCE2BAF5E6C0054D62B /* CategoryViewController.swift in Sources */,
 				59169CB42BA75E240054D62B /* ConfigureTrackerViewController.swift in Sources */,
+				59169CF02BC09BAB0054D62B /* CategoryViewModel.swift in Sources */,
 				5943F2812B795382004D80FF /* SceneDelegate.swift in Sources */,
 				59169CE12BB9655A0054D62B /* Tracker.xcdatamodeld in Sources */,
 				59169CEC2BBDF3F40054D62B /* OnboardingViewController.swift in Sources */,
