@@ -17,7 +17,8 @@ final class AddTrackerViewController: UIViewController {
         button.backgroundColor = .Black
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.setTitle("Привычка", for: .normal)
+        button.setTitle(NSLocalizedString("habitButton.text", comment: ""), for: .normal)
+//        button.setTitle("Привычка", for: .normal)
         button.setTitleColor(.White, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return button
@@ -29,7 +30,8 @@ final class AddTrackerViewController: UIViewController {
         button.backgroundColor = .Black
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.setTitle("Нерегулярные событие", for: .normal)
+        button.setTitle(NSLocalizedString("irregularButton.text", comment: ""), for: .normal)
+//        button.setTitle("Нерегулярные событие", for: .normal)
         button.setTitleColor(.White, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return button
@@ -75,7 +77,8 @@ final class AddTrackerViewController: UIViewController {
     //MARK: - Private Functions
    
        private func setupNavBar(){
-           navigationItem.title = "Создание трека"
+           navigationItem.title = NSLocalizedString("addTracker.title", comment: "")
+//           navigationItem.title = "Создание трека"
        }
    
        private func setupButtons() {

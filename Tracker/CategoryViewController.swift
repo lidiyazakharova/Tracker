@@ -23,7 +23,8 @@ final class CategoryViewController: UIViewController {
     private lazy var label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Привычки и события можно объединить по смыслу"
+        label.text = NSLocalizedString("emptyStateCategory.text", comment: "")
+//        label.text = "Привычки и события можно объединить по смыслу"
         label.numberOfLines = 0
         label.textColor = .Black
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
@@ -37,7 +38,8 @@ final class CategoryViewController: UIViewController {
         button.backgroundColor = .Black
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle(NSLocalizedString("addCategoryButton.text", comment: ""), for: .normal)
+//        button.setTitle("Добавить категорию", for: .normal)
         button.setTitleColor(.White, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(pushAddCategoryButton), for: .touchUpInside)
@@ -104,7 +106,8 @@ final class CategoryViewController: UIViewController {
     // MARK: - Private functions
     private func setupNavBar() {
         navigationItem.hidesBackButton = true
-        navigationItem.title = "Категория"
+        navigationItem.title = NSLocalizedString("category.title", comment: "")
+//        navigationItem.title = "Категория"
     }
     
     private func addViews() {

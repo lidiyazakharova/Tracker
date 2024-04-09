@@ -19,16 +19,16 @@ final class TabBarController: UITabBarController {
     private func generateTabBar() {
         let trackersViewController = TrackersViewController()
         trackersViewController.tabBarItem = UITabBarItem(
-//            title: NSLocalizedString("tabBarTrackersTitle", comment: ""),
-            title: "Трекеры",
+            title: NSLocalizedString("tabBarTrackers.title", comment: ""),
+//            title: "Трекеры",
             image: UIImage(named: "Trackers"),
             selectedImage: nil
         )
         
         let statisticsViewController = StatisticsViewController()
         statisticsViewController.tabBarItem = UITabBarItem(
-//            title: NSLocalizedString("tabBarStatisticsTitle", comment: ""),
-            title: "Статистика",
+            title: NSLocalizedString("tabBarStatistics.title", comment: ""),
+//            title: "Статистика",
             image: UIImage(named: "Statistics"),
             selectedImage: nil
         )

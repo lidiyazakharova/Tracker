@@ -15,7 +15,8 @@ final class StatisticsViewController: UIViewController {
     //MARK: - Private Properties
     private lazy var titleHeader: UILabel = {
         let label = UILabel()
-        label.text = "Cтатистика"
+        label.text = NSLocalizedString("statistics.title", comment: "")
+//        label.text = "Cтатистика"
         label.textColor = .Black
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -36,7 +37,8 @@ final class StatisticsViewController: UIViewController {
     private lazy var label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Анализировать пока нечего"
+        label.text = NSLocalizedString("emptyStatistics.text", comment: "")
+//        label.text = "Анализировать пока нечего"
         label.numberOfLines = 0
         label.textColor = .Black
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)

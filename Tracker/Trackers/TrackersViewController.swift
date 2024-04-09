@@ -25,7 +25,8 @@ final class TrackersViewController: UIViewController {
     
     private let titleHeader: UILabel = {
         let label = UILabel()
-        label.text = "Трекеры"
+        label.text = NSLocalizedString("trackers.title", comment: "")
+//        label.text = "Трекеры"
         label.textColor = .Black
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -72,7 +73,8 @@ final class TrackersViewController: UIViewController {
         ]
         
         let attributedPlaceholder = NSAttributedString(
-            string: "Поиск",
+            string: NSLocalizedString("searchTextField.placeholder", comment: ""),
+//            string: "Поиск",
             attributes: attributes)
         textField.attributedPlaceholder = attributedPlaceholder
         textField.delegate = self
@@ -82,7 +84,8 @@ final class TrackersViewController: UIViewController {
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle(NSLocalizedString("cancelButton.text", comment: ""), for: .normal)
+//        button.setTitle("Отменить", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .Blue
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)

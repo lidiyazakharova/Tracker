@@ -1,10 +1,71 @@
 
 // MARK: - OnboardingViewController
 
-"onboardingBlueLabelText" = "Отслеживайте только то, что хотите";
-"onboardingRedLabelText" = "аже если это\nне литры воды и йога";
-"onboardingDoneButton" = "Вот это технологии!";
+"onboardingBlueLabel.title" = "Отслеживайте только то, что хотите";
+"onboardingRedLabel.title" = "даже если это\n не литры воды и йога";
+"onboardingDoneButton.text" = "Вот это технологии!";
+
+// MARK: -TabBarViewController
+"tabBarTrackers.title" = "Трекеры";
+"tabBarStatistics.title" = "Статистика";
+
+// MARK: - StatisticsViewController
+
+"statistics.title" = "Статистика";
+"emptyStatistics.text" = "Анализировать пока нечего";
+
+// MARK: - TrackersViewController
+
+"trackers.title" = "Трекеры";
+"searchTextField.placeholder" = "Поиск";
+"cancelButton.text" = "Отменить";
+"emptyState.text" = "Что будем отслеживать?";
+"emptySearch.text" = "Ничего не найдено";
+
+// MARK: - CategoryViewController
+"addCategoryButton.text" = "Добавить категорию";
+"emptyStateCategory.text" = "Привычки и события можно\n объединить по смыслу";
+"category.title" = "Категория";
+
+// MARK: - NewCategoryViewController
+
+"newCategoryTextField.placeholder" = "Введите название категории";
+"doneButton.text" = "Готово";
+"newCategory.title" = "Новая категория";
+
+// MARK: - ScheduleViewController
+
+"schedule.title" = "Расписание";
+
+"Monday" = "Понедельник";
+"Tuesday" = "Вторник";
+"Wednesday" = "Среда";
+"Thursday" = "Четверг";
+"Friday" = "Пятница";
+"Saturday" = "Суббота";
+"Sunday" = "Воскресенье";
+
+"Mon" = "Пн";
+"Tue" = "Вт";
+"Wed" = "Ср";
+"Thu" = "Чт";
+"Fri" = "Пт";
+"Sat" = "Сб";
+"Sun" = "Вс";
 
 
-"tabBarTrackersTitle" = "Трекеры";
-"tabBarStatisticsTitle" = "Статистика";
+// MARK: - AddTrackerViewController
+
+"addTracker.title" = "Создание трека";
+"habitButton.text" = "Привычка";
+"irregularButton.text" = "Нерегулярные событие";
+
+
+// MARK: - ConfigureTrackerViewController
+
+"createButton.text" = "Создать";
+"newTrackerName.placeholder" = "Введите название трекера";
+"newHabit.title" = "Новая привычка";
+"newIrregular.title" = "Новое нерегулярное событие";
+"everyDay.text" = "Каждый день";
+"color.title" = "Цвет";

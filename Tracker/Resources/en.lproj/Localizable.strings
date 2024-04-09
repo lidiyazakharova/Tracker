@@ -1,9 +1,74 @@
 
 // MARK: - OnboardingViewController
 
-"onboardingBlueLabelText" = "Track only what you want";
-"onboardingRedLabelText" = "Even if it's not liters of water and yoga";
-"onboardingDoneButton" = "These are the technologies!";
+"onboardingBlueLabel.title" = "Track only what you want";
+"onboardingRedLabel.title" = "Even if it's not litres of water and yoga";
+"onboardingDoneButton.text" = "These are the technologies!";
 
-"tabBarTrackersTitle" = "Trackers";
-"tabBarStatisticsTitle" = "Statictics";
+// MARK: -TabBarViewController
+
+"tabBarTrackers.title" = "Trackers";
+"tabBarStatistics.title" = "Statistics";
+
+// MARK: - StatisticsViewController
+
+"statistics.title" = "Statistics";
+"emptyStatistics.text" = "There is nothing to analyze yet";
+
+
+// MARK: - TrackersViewController
+
+"trackers.title" = "Trackers";
+"searchTextField.placeholder" = "Search";
+"cancelButton.text" = "Cancel";
+"emptyState.text" = "What are we going to track?";
+"emptySearch.text" = "Nothing was found";
+
+// MARK: - CategoryViewController
+
+"addCategoryButton.text" = "Add a category";
+"emptyStateCategory.text" = "Habits and events\n can be combined in meaning";
+"category.title" = "Category";
+
+// MARK: - NewCategoryViewController
+
+"newCategoryTextField.placeholder" = "Enter the name of the category";
+"doneButton.text" = "Done";
+"newCategory.title" = "New category";
+
+// MARK: - ScheduleViewController
+
+"schedule.title" = "Schedule";
+
+"Monday" = "Monday";
+"Tuesday" = "Tuesday";
+"Wednesday" = "Wednesday";
+"Thursday" = "Thursday";
+"Friday" = "Friday";
+"Saturday" = "Saturday";
+"Sunday" = "Sunday";
+
+"Mon" = "Mon";
+"Tue" = "Tue";
+"Wed" = "Wed";
+"Thu" = "Thu";
+"Fri" = "Fri";
+"Sat" = "Sat";
+"Sun" = "Sun";
+
+// MARK: - AddTrackerViewController
+
+"addTracker.title" = "Creating a tracker";
+"habitButton.text" = "Habit";
+"irregularButton.text" = "Irregular events";
+
+// MARK: - ConfigureTrackerViewController
+
+"createButton.text" = "Create";
+"newTrackerName.placeholder" = "Enter the name of the tracker";
+"newHabit.title" = "New habit";
+"newIrregular.title" = "New irregular event";
+"everyDay.text" = "Every day";
+"color.title" = "Color";
+
+
