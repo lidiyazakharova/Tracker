@@ -1,0 +1,9 @@
+
+// MARK: - OnboardingViewController
+
+"onboardingBlueLabelText" = "Track only what you want";
+"onboardingRedLabelText" = "Even if it's not liters of water and yoga";
+"onboardingDoneButton" = "These are the technologies!"
+
+"tabBarTrackersTitle" = "Trackers"
+"tabBarStatisticsTitle" = "Statictics"

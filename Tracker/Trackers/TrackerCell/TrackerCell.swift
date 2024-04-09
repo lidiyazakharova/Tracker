@@ -109,7 +109,7 @@ final class TrackerCell: UICollectionViewCell {
         emojiLabel.text = tracker.emoji
         
         let wordDay = pluralizeDays(completedDays)
-        counterDayLabel.text = "\(wordDay)"
+        counterDayLabel.text = "\(wordDay)" //ПЕРЕДЕЛАТЬ
         
         let image = isCompletedToday ? UIImage(systemName: "checkmark", withConfiguration: pointSize) : UIImage(systemName: "plus", withConfiguration: pointSize)
         plusButton.backgroundColor = color
@@ -117,6 +117,11 @@ final class TrackerCell: UICollectionViewCell {
         plusButton.setImage(image, for: .normal)
         
     }
+    
+//    func updateRecord(days: Int, isCompleted: Bool) {
+//        updatePlusButton(isCompleted: isCompleted)
+//        counterDayLabel.text = formatDaysText(forDays: days)
+//    }
     
     private func addElements() {
         contentView.addSubview(mainView)
@@ -158,6 +163,19 @@ final class TrackerCell: UICollectionViewCell {
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             stackView.heightAnchor.constraint(equalToConstant: 58)
         ])
+    }
+    
+//    private func updateCounterLabelText(completedDays: Int){
+//        let formattedString = String.localizedStringWithFormat(
+//            NSLocalizedString("StringKey", comment: ""),
+//            completedDays
+//        )
+//        completedDaysLabel.text = formattedString
+//    }
+    
+    private func formatDaysText(forDays days: Int) -> String {
+        let daysCounter = String.localizedStringWithFormat(NSLocalizedString("numberOfDays", comment: "numberOfDays"), days)
+        return daysCounter
     }
     
     private func pluralizeDays(_ count: Int) -> String {

@@ -1,0 +1,10 @@
+
+// MARK: - OnboardingViewController
+
+"onboardingBlueLabelText" = "Отслеживайте только то, что хотите";
+"onboardingRedLabelText" = "аже если это\nне литры воды и йога";
+"onboardingDoneButton" = "Вот это технологии!"
+
+
+"tabBarTrackersTitle" = "Трекеры"
+"tabBarStatisticsTitle" = "Статистика"
