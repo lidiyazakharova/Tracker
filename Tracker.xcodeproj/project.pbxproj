@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D59B97C2BC561DD0004B180 /* AppPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D59B97B2BC561DD0004B180 /* AppPreferences.swift */; };
 		59169CB42BA75E240054D62B /* ConfigureTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59169CB32BA75E240054D62B /* ConfigureTrackerViewController.swift */; };
 		59169CB82BA8C18D0054D62B /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59169CB72BA8C18D0054D62B /* TrackerRecord.swift */; };
 		59169CBA2BA8C1D40054D62B /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59169CB92BA8C1D40054D62B /* TrackerCategory.swift */; };
@@ -46,6 +47,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4D59B97B2BC561DD0004B180 /* AppPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferences.swift; sourceTree = "<group>"; };
 		59169CB32BA75E240054D62B /* ConfigureTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureTrackerViewController.swift; sourceTree = "<group>"; };
 		59169CB72BA8C18D0054D62B /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
 		59169CB92BA8C1D40054D62B /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
@@ -97,6 +99,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4D59B97A2BC561C00004B180 /* Prefrences */ = {
+			isa = PBXGroup;
+			children = (
+				4D59B97B2BC561DD0004B180 /* AppPreferences.swift */,
+			);
+			path = Prefrences;
+			sourceTree = "<group>";
+		};
 		59169CB52BA75E520054D62B /* NewTracker */ = {
 			isa = PBXGroup;
 			children = (
@@ -198,6 +208,7 @@
 		5943F27D2B795382004D80FF /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				4D59B97A2BC561C00004B180 /* Prefrences */,
 				5943F27E2B795382004D80FF /* AppDelegate.swift */,
 				5943F2802B795382004D80FF /* SceneDelegate.swift */,
 				59169CEA2BBDF3960054D62B /* OnboardingScreen */,
@@ -354,6 +365,7 @@
 				5943F2812B795382004D80FF /* SceneDelegate.swift in Sources */,
 				59169CE12BB9655A0054D62B /* Tracker.xcdatamodeld in Sources */,
 				59169CEC2BBDF3F40054D62B /* OnboardingViewController.swift in Sources */,
+				4D59B97C2BC561DD0004B180 /* AppPreferences.swift in Sources */,
 				59169CE52BB993960054D62B /* TrackerCategoryStore.swift in Sources */,
 				59CDE85C2B8245980036FE76 /* StatisticsViewController.swift in Sources */,
 				59169CD92BB4A7F00054D62B /* EmojisAndColorsCell.swift in Sources */,
@@ -496,7 +508,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3U52ZX6J4K;
+				DEVELOPMENT_TEAM = 3UVM3BLJDU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tracker/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -510,7 +522,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ru.zakharova.Tracker;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.zakharov.Tracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -525,7 +537,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3U52ZX6J4K;
+				DEVELOPMENT_TEAM = 3UVM3BLJDU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tracker/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -539,7 +551,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ru.zakharova.Tracker;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.zakharov.Tracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

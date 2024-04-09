@@ -18,6 +18,10 @@ final class CategoryViewModel {
     
     private var trackerCategoryStore = TrackerCategoryStore.shared
     
+    init() {
+        trackerCategoryStore.setDelegate(self)
+    }
+    
     // MARK: - Methods
     func fetchCategories() throws {
         do {
