@@ -218,7 +218,7 @@ final class TrackersViewController: UIViewController {
             
             datePicker.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
             datePicker.centerYAnchor.constraint(equalTo: plusButton.centerYAnchor),
-            datePicker.widthAnchor.constraint(equalToConstant: 95),
+            datePicker.widthAnchor.constraint(equalToConstant: 104),
             datePicker.heightAnchor.constraint(equalToConstant: 34),
             
             searchStackView.topAnchor.constraint(equalTo: titleHeader.bottomAnchor, constant: 7),
@@ -300,14 +300,8 @@ final class TrackersViewController: UIViewController {
     }
     
     private func reloadPlaceholder() {
-        placeholderView.isHidden = check() || !(searchTextField.text ?? "").isEmpty
-    }
-    
-    private func check() -> Bool {
-        return categories.contains(where: { category in
-            !category.trackers.isEmpty
-        })
-        
+        let isVisible = filteredCategories.isEmpty && (searchTextField.text ?? "").isEmpty
+        placeholderView.isHidden = !isVisible
     }
     
     private func addTapGestureToHideKeyboard() {
