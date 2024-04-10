@@ -25,6 +25,7 @@
 "pinTracker.text" = "Закрепить";
 "edit.text" = "Редактировать";
 "delete.text" = "Удалить";
+"filterButton.text" = "Фильтры";
 
 // MARK: - CategoryViewController
 "addCategoryButton.text" = "Добавить категорию";

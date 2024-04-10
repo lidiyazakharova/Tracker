@@ -27,6 +27,7 @@
 "pinTracker.text" = "Pin";
 "edit.text" = "Edit";
 "delete.text" = "Delete";
+"filterButton.text" = "Filters";
 
 // MARK: - CategoryViewController
 

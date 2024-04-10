@@ -6,6 +6,7 @@ protocol TrackersViewControllerDelegate: AnyObject {
 }
 
 final class TrackersViewController: UIViewController {
+    var selectedFilter: Filter?
     
     //MARK: - Private Properties
     private let headerView: UIView = {
@@ -26,7 +27,7 @@ final class TrackersViewController: UIViewController {
     private let titleHeader: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString("trackers.title", comment: "")
-//        label.text = "Трекеры"
+        //        label.text = "Трекеры"
         label.textColor = .Black
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -74,7 +75,7 @@ final class TrackersViewController: UIViewController {
         
         let attributedPlaceholder = NSAttributedString(
             string: NSLocalizedString("searchTextField.placeholder", comment: ""),
-//            string: "Поиск",
+            //            string: "Поиск",
             attributes: attributes)
         textField.attributedPlaceholder = attributedPlaceholder
         textField.delegate = self
@@ -85,13 +86,27 @@ final class TrackersViewController: UIViewController {
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle(NSLocalizedString("cancelButton.text", comment: ""), for: .normal)
-//        button.setTitle("Отменить", for: .normal)
+        //        button.setTitle("Отменить", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .Blue
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
         button.widthAnchor.constraint(equalToConstant: 83).isActive = true
         button.isHidden = true
         button.addTarget(self, action: #selector(cancelSearch), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var filterButton: UIButton = {
+        let button = UIButton(type: .system)
+        let textTitle = NSLocalizedString("filterButton.text", comment: "")
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(textTitle, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .Blue
+        button.layer.cornerRadius = 16
+        button.isHidden = true
+        button.addTarget(self, action: #selector(didTapFilterButton), for: .touchUpInside)
         return button
     }()
     
@@ -125,6 +140,17 @@ final class TrackersViewController: UIViewController {
     private let analyticsService = AnalyticsService.shared
     
     //MARK: - Lifecycle
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        analyticsService.report(event: "open", params: ["screen": "Main"])
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        analyticsService.report(event: "close", params: ["screen" : "Main"])
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -181,6 +207,7 @@ final class TrackersViewController: UIViewController {
         view.addSubview(placeholderView)
         view.addSubview(emptySearchPlaceholderView)
         view.addSubview(collectionView)
+        view.addSubview(filterButton)
         
         headerView.addSubview(plusButton)
         headerView.addSubview(titleHeader)
@@ -244,7 +271,12 @@ final class TrackersViewController: UIViewController {
             searchTextField.leadingAnchor.constraint(equalTo: searchStackView.leadingAnchor),
             noCancelConstraint,
             
-            cancelButton.trailingAnchor.constraint(equalTo: searchStackView.trailingAnchor)
+            cancelButton.trailingAnchor.constraint(equalTo: searchStackView.trailingAnchor),
+            
+            filterButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.widthAnchor.constraint(equalToConstant: 114),
+            filterButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
@@ -252,6 +284,7 @@ final class TrackersViewController: UIViewController {
         let createTrackerVC = AddTrackerViewController()
         createTrackerVC.delegate = self
         let navVC = UINavigationController(rootViewController: createTrackerVC)
+        analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "add_track"])
         present(navVC, animated: true)
     }
     
@@ -260,8 +293,6 @@ final class TrackersViewController: UIViewController {
         cancelConstraint.isActive = false
         noCancelConstraint.isActive = true
         searchTextField.text = ""
-        
-        
         reloadFilteredCategories(text: searchTextField.text, date: currentDate)
     }
     
@@ -274,6 +305,24 @@ final class TrackersViewController: UIViewController {
         searchTextField.endEditing(true)
     }
     
+    @objc private func didTapFilterButton() {
+        let filtersViewController = FiltersViewController()
+        filtersViewController.delegate = self
+        filtersViewController.selectedFilter = selectedFilter
+        analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "filter"])
+        present(filtersViewController, animated: true)
+    }
+    
+    private func filteringTrackers(completed: Bool) {
+        filteredCategories = filteredCategories.compactMap { category in
+            let trackers = category.trackers.filter { tracker in
+                completed ? isTrackerCompletedToday(id: tracker.id)
+                : !isTrackerCompletedToday(id: tracker.id)
+            }
+            if trackers.isEmpty { return nil }
+            return TrackerCategory(title: category.title, trackers: trackers)
+        }
+    } //to do
     
     private func reloadFilteredCategories(text: String?, date: Date) {
         let calendar = Calendar.current
@@ -301,6 +350,7 @@ final class TrackersViewController: UIViewController {
         collectionView.reloadData()
         reloadPlaceholder()
         emptySearchPlaceholderView.isHidden = !filteredCategories.isEmpty || (searchTextField.text ?? "").isEmpty
+        filterButton.isHidden = !filteredCategories.isEmpty//NEED CHECK
     }
     
     private func reloadPlaceholder() {
@@ -313,6 +363,31 @@ final class TrackersViewController: UIViewController {
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
+    
+    private func reloadPinTrackers() {
+        categories = []
+        var pinnedTrackers: [Tracker] = []
+        
+        for category in trackerCategoryStore.trackerCategory {
+            let trackers = category.trackers
+            let pinnedTrackersForCategory = trackers.filter { $0.isPinned }
+            let unpinnedTrackers = trackers.filter { !$0.isPinned }
+            pinnedTrackers.append(contentsOf: pinnedTrackersForCategory)
+            
+            if !unpinnedTrackers.isEmpty {
+                let unpinnedCategory = TrackerCategory(title: category.title, trackers: unpinnedTrackers)
+                categories.append(unpinnedCategory)
+            }
+        }
+        
+        if !pinnedTrackers.isEmpty {
+            let pinnedCategory = TrackerCategory(
+                title: NSLocalizedString("pinnedTrackers", comment: "Pinned"),//to do
+                trackers: pinnedTrackers)
+            categories.insert(pinnedCategory, at: 0)
+        }
+    }
+    
     
 }
 
@@ -406,23 +481,22 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
         let category = filteredCategories[indexPath.section]
         let unpinTracker = NSLocalizedString("unpinTracker.text", comment: "")
         let pinTracker = NSLocalizedString("pinTracker.text", comment: "")
-        let titleTextIsPinned = ""
-//        let titleTextIsPinned = tracker.isPinned ? unpinTracker : pinTracker
-
+        let titleTextIsPinned = tracker.isPinned ? unpinTracker : pinTracker
+        
         let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions in
-
+            
             let pinTracker = UIAction(title: titleTextIsPinned) { [weak self] _ in
                 guard let self = self else { return }
                 try? self.pinTracker(tracker)
             }
-
+            
             let editTracker = UIAction(
                 title: NSLocalizedString("edit.text", comment: "")) { [weak self] _ in
                     guard let self = self else { return }
                     self.editingTrackers(category: category, tracker: tracker)
                     self.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "edit"])
                 }
-
+            
             let deleteTracker = UIAction(
                 title: NSLocalizedString("delete.text", comment: "deleteTracker"),
                 image: nil,
@@ -437,7 +511,7 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
         }
         return configuration
     }
-
+    
     
     private func isTrackerCompletedToday(id: UUID) -> Bool {
         completedTrackers.contains {
@@ -472,6 +546,7 @@ extension TrackersViewController: TrackerCellDelegate {
         } catch {
             print("Complete task failed")
         }
+        analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "track"])
     }
     
     func uncompletedTracker(id: UUID, at indexPath: IndexPath) {
@@ -491,7 +566,7 @@ extension TrackersViewController: TrackerCellDelegate {
     
     private func pinTracker(_ tracker: Tracker) throws {
         do {
-//            try trackerStore.pinTrackerCoreData(tracker)
+            try trackerStore.pinTrackerCoreData(tracker)
             try? trackerCategoryStore.getCategories() //check
             reloadFilteredCategories(text: searchTextField.text, date: currentDate)
         } catch {
@@ -500,11 +575,44 @@ extension TrackersViewController: TrackerCellDelegate {
     }
     
     private func deleteTrackerInCategory(atIndex index: IndexPath) throws {
-        //TO do
+        let tracker = filteredCategories[index.section].trackers[index.row]
+        do {
+            try trackerStore.deleteTrackers(tracker: tracker)
+            try trackerRecordStore.deleteAllRecordForID(for: tracker.id)
+            try fetchCategories()
+            reloadFilteredCategories(text: searchTextField.text, date: currentDate)
+        } catch {
+            print("Delete tracker is failed")
+        }
+    }//to do
+    
+    private func addRecord(record: TrackerRecord) throws {
+        do {
+            try trackerRecordStore.createRecord(from: record)
+            try fetchRecord()
+        } catch {
+            throw ErrorStore.error
+        }
+    }
+    
+    private func deleteRecord(atIndex index: Int) throws {
+        let record = completedTrackers[index]
+        do {
+            try trackerRecordStore.deleteRecord(trackerRecord: record)
+            try fetchRecord()
+        } catch {
+            throw ErrorStore.error
+        }
+    }
+    
+    private func recordsFetch() throws {
+        do {
+            completedTrackers = try trackerRecordStore.fetchRecords()
+        } catch {
+            throw ErrorStore.error
+        }
     }
 }
-
-
 
 //MARK: - UICollectionViewFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
@@ -569,6 +677,28 @@ extension TrackersViewController {
     }
 }
 
+//MARK: - FiltersViewControllerDelegate
+extension TrackersViewController: FiltersViewControllerDelegate {
+    func filterSelected(filter: Filter) {
+        selectedFilter = filter
+        searchTextField.text = ""
+        switch filter {
+        case .all:
+            filterButton.setTitleColor(.White, for: .normal)
+        case .today:
+            datePicker.setDate(Date(), animated: false)
+            currentDate = datePicker.date
+            filterButton.setTitleColor(.White, for: .normal)
+        case .completed:
+            filterButton.setTitleColor(.White, for: .normal)
+        case .uncompleted:
+            filterButton.setTitleColor(.White, for: .normal)//check
+        }
+        reloadFilteredCategories(text: searchTextField.text, date: currentDate)//check
+    }
+}
+
+
 // MARK: - Extension Alert
 extension TrackersViewController {
     private func showDeleteAlert(indexPath: IndexPath) {
@@ -596,4 +726,5 @@ extension TrackersViewController {
         self.present(alert, animated: true)
     }
 }
+
 
