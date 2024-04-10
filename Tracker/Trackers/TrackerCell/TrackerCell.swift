@@ -15,7 +15,7 @@ final class TrackerCell: UICollectionViewCell {
     
     //MARK: - Private Properties
     
-    private let mainView: UIView = {
+    var mainView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -70,6 +70,13 @@ final class TrackerCell: UICollectionViewCell {
         return button
     }()
     
+//    private lazy var pinnedImage: UIImageView = {
+//        let imageView = UIImageView()
+//        imageView.image = UIImage(named: "Pin")
+//        imageView.isHidden = true
+//        return imageView
+//    }()
+    
     private var isCompletedToday: Bool = false
     private var trackerID: UUID?
     private var indexPath: IndexPath?
@@ -107,6 +114,8 @@ final class TrackerCell: UICollectionViewCell {
         mainView.backgroundColor = color
         taskTitleLabel.text = tracker.title
         emojiLabel.text = tracker.emoji
+        
+//        pinnedImage.isHidden = !tracker.isPinned
         
         let wordDay = pluralizeDays(completedDays)
         counterDayLabel.text = "\(wordDay)" //ПЕРЕДЕЛАТЬ

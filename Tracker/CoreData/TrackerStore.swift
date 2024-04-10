@@ -101,6 +101,9 @@ final class TrackerStore: NSObject {
         )
     }
     
+   // isPinned = tracker.isPinned ДОБАВИТЬ СВОЙСТВО
+    
+    
     private func addTracker(_ tracker: Tracker, to category: TrackerCategory) throws {
         let trackerCategoryCoreData = try trackerCategoryStore.fetchCategoryCoreData(for: category)
         let trackerCoreData = TrackerCoreData(context: context)

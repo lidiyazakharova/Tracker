@@ -1,8 +1,27 @@
 import UIKit
 
+//MARK: - TypeOfCategory
+enum TypeOfCategory {
+    case create
+    case edit
+}
+
+//MARK: - NewCategoryViewControllerDelegate
+protocol NewCategoryViewControllerDelegate: AnyObject {
+    func addNewCategories(category: String)
+    func reloadCategories()
+}
+
+
 final class NewCategoryViewController: UIViewController {
     
+    
+    weak var delegate: NewCategoryViewControllerDelegate?
+    var editingCategoryName: String?
+    var typeOfCategory: TypeOfCategory?
+    
     private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore.shared
+    private var categoryName: String = ""
     
     // MARK: - Private Properties
     
@@ -95,6 +114,13 @@ final class NewCategoryViewController: UIViewController {
             doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
     }
+    
+//    private func editCategory() {
+//        if typeOfCategory == .edit {
+//            nameCategoryTextField.text = editingCategoryName
+//            categoryLabel.text = "Редактирование категории"
+//        }
+//    }
 }
 
 // MARK: - UITextFieldDelegate
@@ -114,6 +140,21 @@ extension NewCategoryViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+}
+
+//MARK: - Extension
+@objc extension NewCategoryViewController {
+    func didTapCreateCategoryButton() {
+        if typeOfCategory == .create {
+            delegate?.addNewCategories(category: categoryName)
+            
+        } else if typeOfCategory == .edit {
+            guard let editingCategoryName = editingCategoryName else { return }
+//            trackerCategoryStore.updateCategory(categoryName: editingCategoryName, with: categoryName)
+            delegate?.reloadCategories()
+        }
+        dismiss(animated: true)
     }
 }
 

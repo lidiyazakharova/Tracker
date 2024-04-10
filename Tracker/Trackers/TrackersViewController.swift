@@ -122,6 +122,7 @@ final class TrackersViewController: UIViewController {
     private let trackerStore: TrackerStoreProtocol = TrackerStore.shared
     private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore.shared
     private let trackerRecordStore: TrackerRecordStoreProtocol = TrackerRecordStore.shared
+    private let analyticsService = AnalyticsService.shared
     
     //MARK: - Lifecycle
     
@@ -312,6 +313,7 @@ final class TrackersViewController: UIViewController {
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
+    
 }
 
 //MARK: - UITextFieldDelegate
@@ -373,6 +375,70 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
         return cell
     }
     
+    func collectionView(
+        _ collectionView: UICollectionView,
+        previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
+    ) -> UITargetedPreview? {
+        guard let indexPath = configuration.identifier as? IndexPath,
+              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
+        
+        let view = cell.mainView
+        return UITargetedPreview(view: view)
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
+    ) -> UITargetedPreview? {
+        guard let indexPath = configuration.identifier as? IndexPath,
+              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
+        
+        let view = cell.mainView
+        return UITargetedPreview(view: view)
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        let tracker = filteredCategories[indexPath.section].trackers[indexPath.row]
+        let category = filteredCategories[indexPath.section]
+        let unpinTracker = NSLocalizedString("unpinTracker.text", comment: "")
+        let pinTracker = NSLocalizedString("pinTracker.text", comment: "")
+        let titleTextIsPinned = ""
+//        let titleTextIsPinned = tracker.isPinned ? unpinTracker : pinTracker
+
+        let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions in
+
+            let pinTracker = UIAction(title: titleTextIsPinned) { [weak self] _ in
+                guard let self = self else { return }
+                try? self.pinTracker(tracker)
+            }
+
+            let editTracker = UIAction(
+                title: NSLocalizedString("edit.text", comment: "")) { [weak self] _ in
+                    guard let self = self else { return }
+                    self.editingTrackers(category: category, tracker: tracker)
+                    self.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "edit"])
+                }
+
+            let deleteTracker = UIAction(
+                title: NSLocalizedString("delete.text", comment: "deleteTracker"),
+                image: nil,
+                identifier: nil,
+                discoverabilityTitle: nil,
+                attributes: .destructive) {[weak self] _ in
+                    guard let self = self else { return }
+                    self.showDeleteAlert(indexPath: indexPath)
+                    self.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "delete"])
+                }
+            return  UIMenu(children: [pinTracker, editTracker, deleteTracker])
+        }
+        return configuration
+    }
+
+    
     private func isTrackerCompletedToday(id: UUID) -> Bool {
         completedTrackers.contains {
             isMatchRecord(model: $0, with: id)
@@ -422,7 +488,23 @@ extension TrackersViewController: TrackerCellDelegate {
             print("Remove task failed")
         }
     }
+    
+    private func pinTracker(_ tracker: Tracker) throws {
+        do {
+//            try trackerStore.pinTrackerCoreData(tracker)
+            try? trackerCategoryStore.getCategories() //check
+            reloadFilteredCategories(text: searchTextField.text, date: currentDate)
+        } catch {
+            print("Pin tracker failed")
+        }
+    }
+    
+    private func deleteTrackerInCategory(atIndex index: IndexPath) throws {
+        //TO do
+    }
 }
+
+
 
 //MARK: - UICollectionViewFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
@@ -477,6 +559,41 @@ extension TrackersViewController: TrackerStoreDelegate {
             collectionView.insertSections(update.insertedSections)
             collectionView.insertItems(at: update.insertedIndexPaths)
         }
+    }
+}
+
+// MARK: - Extension Edit tracker
+extension TrackersViewController {
+    private func editingTrackers(category: TrackerCategory, tracker: Tracker) {
+        //TO DO
+    }
+}
+
+// MARK: - Extension Alert
+extension TrackersViewController {
+    private func showDeleteAlert(indexPath: IndexPath) {
+        let alert = UIAlertController(
+            title: nil,
+            message: NSLocalizedString("showDeleteAlert", comment: ""),
+            preferredStyle: .actionSheet
+        )
+        let deleteButton = UIAlertAction(
+            title: NSLocalizedString("deleteTracker", comment: ""),
+            style: .destructive) { [weak self] _ in
+                guard let self = self else { return }
+                do {
+                    try self.deleteTrackerInCategory(atIndex: indexPath)
+                } catch {
+                    print("Error deleting tracker: \(error)")
+                }
+            }
+        let cencelButton = UIAlertAction(
+            title: NSLocalizedString("cancel", comment: "cancel"),
+            style: .cancel
+        )
+        alert.addAction(deleteButton)
+        alert.addAction(cencelButton)
+        self.present(alert, animated: true)
     }
 }
 

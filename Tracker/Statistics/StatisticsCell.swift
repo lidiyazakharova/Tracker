@@ -7,14 +7,16 @@ final class StatisticsCell: UICollectionViewCell {
     
     private lazy var countLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 34)
+        label.font = UIFont.systemFont(ofSize: 34, weight: .bold)
+        label.textColor = .Black
         label.textAlignment = .left
         return label
     }()
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .Black
         label.textAlignment = .left
         return label
     }()
@@ -38,7 +40,7 @@ final class StatisticsCell: UICollectionViewCell {
     //MARK: - Private methods
     private func setupCell() {
         addViews()
-        layoutViews()
+        setupConstraints()
         configureGradient()
         contentView.layer.cornerRadius = 16
         contentView.layer.masksToBounds = true
@@ -72,7 +74,7 @@ final class StatisticsCell: UICollectionViewCell {
         }
     }
     
-    private func layoutViews() {
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             countLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
             countLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),

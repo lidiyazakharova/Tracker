@@ -23,6 +23,10 @@
 "cancelButton.text" = "Cancel";
 "emptyState.text" = "What are we going to track?";
 "emptySearch.text" = "Nothing was found";
+"unpinTracker.text" = "Unpin";
+"pinTracker.text" = "Pin";
+"edit.text" = "Edit";
+"delete.text" = "Delete";
 
 // MARK: - CategoryViewController
 
@@ -71,4 +75,11 @@
 "everyDay.text" = "Every day";
 "color.title" = "Color";
 
+
+// MARK: - TrackerCollectionViewCell
+
+"pinAction.title" = "Pin";
+"unpinAction.title" = "Unpin";
+"editAction.title" = "Edit";
+"deleteAction.title" = "Delete";
 
