@@ -34,7 +34,7 @@ final class TrackerCategoryStore: NSObject {
     
     static let shared = TrackerCategoryStore()
     
-    weak var delegate: TrackerCategoryStoreDelegate?
+    private weak var delegate: TrackerCategoryStoreDelegate?
     
     // MARK: - Private properties
     

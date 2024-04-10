@@ -267,9 +267,14 @@ final class ConfigureTrackerViewController: UIViewController {
         let isAvailable: Bool
         
         if(isRepeat) {
-            isAvailable = !selectedSchedule.isEmpty && selectedTrackerCategory != nil
+            isAvailable = !selectedSchedule.isEmpty &&
+            selectedTrackerCategory != nil &&
+            selectedEmoji != nil &&
+            selectedColor != nil
         } else {
-            isAvailable = selectedTrackerCategory != nil
+            isAvailable = selectedTrackerCategory != nil &&
+            selectedEmoji != nil &&
+            selectedColor != nil
         }
         createButton.isEnabled = isAvailable
         
@@ -525,6 +530,7 @@ extension ConfigureTrackerViewController: UICollectionViewDelegateFlowLayout {
         default:
             return
         }
+        
         checkButtonActivation()
     }
     
