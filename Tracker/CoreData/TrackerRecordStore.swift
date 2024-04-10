@@ -37,9 +37,9 @@ final class TrackerRecordStore: NSObject {
         super.init()
     }
     
-    // MARK: - Private functions
+    // MARK: - Functions
     
-    private func fetchRecords(_ tracker: Tracker) throws -> [TrackerRecord] {
+    func fetchRecords(_ tracker: Tracker) throws -> [TrackerRecord] {
         let request = TrackerRecordCoreData.fetchRequest()
         request.returnsObjectsAsFaults = false
         request.predicate = NSPredicate(

@@ -85,7 +85,9 @@ final class TrackerStore: NSObject {
         guard let id = trackerCoreData.idTracker,
               let title = trackerCoreData.title,
               let colorString = trackerCoreData.color,
-              let emoji = trackerCoreData.emoji else {
+              let emoji = trackerCoreData.emoji,
+              let isPinned = trackerCoreData.isPinned
+        else {
             throw TrackerStoreError.decodingErrorInvalidID
         }
         
@@ -97,12 +99,29 @@ final class TrackerStore: NSObject {
             title: title,
             color: color,
             emoji: emoji,
-            schedule: schedule
+            schedule: schedule,
+            isPinned: isPinned
         )
     }
     
    // isPinned = tracker.isPinned ДОБАВИТЬ СВОЙСТВО
-    
+    func pinTrackerCoreData(_ tracker: Tracker) throws {
+        let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        do {
+            guard let trackerCoreData = try? context.fetch(fetchRequest) else { return }
+            if let trackerToPin = trackerCoreData.first {
+                if trackerToPin.isPinned == false {
+                    trackerToPin.isPinned = true
+                } else if trackerToPin.isPinned == true {
+                    trackerToPin.isPinned = false
+                }
+                try context.save()
+            }
+        } catch {
+           print("Pin tracker Failed")
+        }
+    }
     
     private func addTracker(_ tracker: Tracker, to category: TrackerCategory) throws {
         let trackerCategoryCoreData = try trackerCategoryStore.fetchCategoryCoreData(for: category)
