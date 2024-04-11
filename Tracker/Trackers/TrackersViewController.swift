@@ -577,7 +577,7 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
                 }
             
             let deleteTracker = UIAction(
-                title: NSLocalizedString("delete.text", comment: "deleteTracker"),
+                title: NSLocalizedString("delete.text", comment: " "),
                 image: nil,
                 identifier: nil,
                 discoverabilityTitle: nil,
@@ -782,11 +782,11 @@ extension TrackersViewController {
     private func showDeleteAlert(indexPath: IndexPath) {
         let alert = UIAlertController(
             title: nil,
-            message: NSLocalizedString("showDeleteAlert", comment: ""),
+            message: NSLocalizedString("showDeleteAlert.text", comment: ""),
             preferredStyle: .actionSheet
         )
         let deleteButton = UIAlertAction(
-            title: NSLocalizedString("deleteTracker", comment: ""),
+            title: NSLocalizedString("delete.text", comment: ""),
             style: .destructive) { [weak self] _ in
                 guard let self = self else { return }
                 do {
@@ -796,7 +796,7 @@ extension TrackersViewController {
                 }
             }
         let cencelButton = UIAlertAction(
-            title: NSLocalizedString("cancel", comment: "cancel"),
+            title: NSLocalizedString("cancelButton.text", comment: ""),
             style: .cancel
         )
         alert.addAction(deleteButton)

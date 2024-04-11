@@ -27,6 +27,7 @@
 "edit.text" = "Редактировать";
 "delete.text" = "Удалить";
 "filterButton.text" = "Фильтры";
+"showDeleteAlert.text" = "Уверены, что хотите удалить трекер?";
 
 // MARK: - CategoryViewController
 "addCategoryButton.text" = "Добавить категорию";

@@ -29,6 +29,7 @@
 "edit.text" = "Edit";
 "delete.text" = "Delete";
 "filterButton.text" = "Filters";
+"showDeleteAlert.text" = "Are you sure you want delete tracker?";
 
 // MARK: - CategoryViewController
 
