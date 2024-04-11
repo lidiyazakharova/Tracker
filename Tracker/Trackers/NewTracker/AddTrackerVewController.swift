@@ -60,7 +60,7 @@ final class AddTrackerViewController: UIViewController {
    
        @objc private func habitButtonClicked() {
            let configureTrackerViewController = ConfigureTrackerViewController()
-           configureTrackerViewController.isRepeat = true
+           configureTrackerViewController.typeOfTracker = .habit
            configureTrackerViewController.delegate = self
            let navigationController = UINavigationController(rootViewController: configureTrackerViewController)
            present(navigationController, animated: true)
@@ -68,7 +68,7 @@ final class AddTrackerViewController: UIViewController {
    
        @objc private func irregularButtonClicked() {
            let configureTrackerViewController = ConfigureTrackerViewController()
-           configureTrackerViewController.isRepeat = false
+           configureTrackerViewController.typeOfTracker = .irregularEvent
            configureTrackerViewController.delegate = self
            let navigationController = UINavigationController(rootViewController: configureTrackerViewController)
            present(navigationController, animated: true)

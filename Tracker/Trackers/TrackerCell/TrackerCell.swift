@@ -70,12 +70,13 @@ final class TrackerCell: UICollectionViewCell {
         return button
     }()
     
-//    private lazy var pinnedImage: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.image = UIImage(named: "Pin")
-//        imageView.isHidden = true
-//        return imageView
-//    }()
+    private lazy var pinnedImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Pin")
+        imageView.isHidden = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
     
     private var isCompletedToday: Bool = false
     private var trackerID: UUID?
@@ -115,10 +116,11 @@ final class TrackerCell: UICollectionViewCell {
         taskTitleLabel.text = tracker.title
         emojiLabel.text = tracker.emoji
         
-//        pinnedImage.isHidden = !tracker.isPinned
+        pinnedImage.isHidden = !tracker.isPinned
         
-        let wordDay = pluralizeDays(completedDays)
-        counterDayLabel.text = "\(wordDay)" //ПЕРЕДЕЛАТЬ
+//        let wordDay = pluralizeDays(completedDays)
+//        counterDayLabel.text = "\(wordDay)" //ПЕРЕДЕЛАТЬ
+        counterDayLabel.text = formatDaysText(forDays: completedDays)
         
         let image = isCompletedToday ? UIImage(systemName: "checkmark", withConfiguration: pointSize) : UIImage(systemName: "plus", withConfiguration: pointSize)
         plusButton.backgroundColor = color
@@ -127,10 +129,10 @@ final class TrackerCell: UICollectionViewCell {
         
     }
     
-//    func updateRecord(days: Int, isCompleted: Bool) {
+    func updateRecord(days: Int, isCompleted: Bool) {
 //        updatePlusButton(isCompleted: isCompleted)
-//        counterDayLabel.text = formatDaysText(forDays: days)
-//    }
+        counterDayLabel.text = formatDaysText(forDays: days)
+    }
     
     private func addElements() {
         contentView.addSubview(mainView)
@@ -138,6 +140,8 @@ final class TrackerCell: UICollectionViewCell {
         
         mainView.addSubview(emojiLabel)
         mainView.addSubview(taskTitleLabel)
+        mainView.addSubview(pinnedImage)
+        
         stackView.addSubview(counterDayLabel)
         stackView.addSubview(plusButton)
         
@@ -159,6 +163,11 @@ final class TrackerCell: UICollectionViewCell {
             taskTitleLabel.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -12),
             taskTitleLabel.bottomAnchor.constraint(equalTo: mainView.bottomAnchor, constant: -12),
             
+            pinnedImage.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -4),
+            pinnedImage.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 12),
+            pinnedImage.widthAnchor.constraint(equalToConstant: 24),
+            pinnedImage.heightAnchor.constraint(equalToConstant: 24),
+            
             plusButton.widthAnchor.constraint(equalToConstant: 34),
             plusButton.heightAnchor.constraint(equalToConstant: 34),
             plusButton.topAnchor.constraint(equalTo: stackView.topAnchor, constant: 8),
@@ -174,29 +183,30 @@ final class TrackerCell: UICollectionViewCell {
         ])
     }
     
-//    private func updateCounterLabelText(completedDays: Int){
+    private func updateCounterLabelText(completedDays: Int){
 //        let formattedString = String.localizedStringWithFormat(
 //            NSLocalizedString("StringKey", comment: ""),
 //            completedDays
 //        )
 //        completedDaysLabel.text = formattedString
-//    }
+        counterDayLabel.text = formatDaysText(forDays: completedDays)
+    }
     
     private func formatDaysText(forDays days: Int) -> String {
         let daysCounter = String.localizedStringWithFormat(NSLocalizedString("numberOfDays", comment: "numberOfDays"), days)
         return daysCounter
     }
     
-    private func pluralizeDays(_ count: Int) -> String {
-        let remainder10 = count % 10
-        let remainder100 = count % 100
-        
-        if remainder10 == 1 && remainder100 != 11 {
-            return "\(count) день"
-        } else if remainder10 >= 2 && remainder10 <= 4 && (remainder100 < 10 || remainder100 >= 20) {
-            return "\(count) дня"
-        } else {
-            return "\(count) дней"
-        }
-    }
+//    private func pluralizeDays(_ count: Int) -> String {
+//        let remainder10 = count % 10
+//        let remainder100 = count % 100
+//        
+//        if remainder10 == 1 && remainder100 != 11 {
+//            return "\(count) день"
+//        } else if remainder10 >= 2 && remainder10 <= 4 && (remainder100 < 10 || remainder100 >= 20) {
+//            return "\(count) дня"
+//        } else {
+//            return "\(count) дней"
+//        }
+//    }
 }

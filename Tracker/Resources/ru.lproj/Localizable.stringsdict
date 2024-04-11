@@ -2,11 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>StringKey</key>
+	<key>numberOfDays</key>
 	<dict>
-		<key>numberOfDays</key>
+		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@days@</string>
-		<key>VARIABLE</key>
+		<key>days</key>
 		<dict>
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>

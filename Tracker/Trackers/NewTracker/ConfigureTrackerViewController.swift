@@ -1,5 +1,12 @@
 import UIKit
 
+//MARK: - TypeOfTracker
+enum TypeOfTracker {
+    case habit
+    case irregularEvent
+    case edit
+}
+
 protocol ConfigureTrackerViewControllerDelegate {
     func trackerDidSaved()
 }
@@ -8,11 +15,11 @@ final class ConfigureTrackerViewController: UIViewController {
     
     //MARK: - Properties
     
-    var isRepeat: Bool = false
+    //    var isRepeat: Bool = false
     var delegate: ConfigureTrackerViewControllerDelegate?
     
     let titlesForTableView = [NSLocalizedString("category.title", comment: ""),NSLocalizedString("schedule.title", comment: "")]
-//    let titlesForTableView = ["Категория", "Расписание"]
+    //    let titlesForTableView = ["Категория", "Расписание"]
     
     var emojis = [
         "🙂", "😻", "🌺", "🐶", "❤️", "😱",
@@ -33,6 +40,11 @@ final class ConfigureTrackerViewController: UIViewController {
     var selectedColor: UIColor?
     var selectedColorIndex: Int?
     
+    var typeOfTracker: TypeOfTracker?
+    var editCategory: TrackerCategory?
+    var editTracker: Tracker?
+    var daysCount: Int?
+    
     private let trackerStore = TrackerStore.shared
     private var selectedSchedule: [Weekday] = []
     private var switchStates: [Int: Bool] = [:]
@@ -46,7 +58,7 @@ final class ConfigureTrackerViewController: UIViewController {
         textField.layer.masksToBounds = true
         textField.font = UIFont.systemFont(ofSize: 17)
         textField.placeholder = NSLocalizedString("newTrackerName.placeholder", comment: "")
-//        textField.placeholder = "Введите название трекера"
+        //        textField.placeholder = "Введите название трекера"
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .done
         textField.enablesReturnKeyAutomatically = true
@@ -85,7 +97,7 @@ final class ConfigureTrackerViewController: UIViewController {
         cancelButton.layer.cornerRadius = 16
         cancelButton.layer.masksToBounds = true
         cancelButton.setTitle(NSLocalizedString("cancelButton.text", comment: ""), for: .normal)
-//        cancelButton.setTitle("Отменить", for: .normal)
+        //        cancelButton.setTitle("Отменить", for: .normal)
         cancelButton.setTitleColor(.Red, for: .normal)
         cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         cancelButton.layer.borderWidth = 1
@@ -100,7 +112,7 @@ final class ConfigureTrackerViewController: UIViewController {
         createButton.layer.cornerRadius = 16
         createButton.layer.masksToBounds = true
         createButton.setTitle(NSLocalizedString("createButton.text", comment: ""), for: .normal)
-//        createButton.setTitle("Создать", for: .normal)
+        //        createButton.setTitle("Создать", for: .normal)
         createButton.setTitleColor(.White, for: .normal)
         createButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
@@ -113,7 +125,7 @@ final class ConfigureTrackerViewController: UIViewController {
             collectionViewLayout: UICollectionViewFlowLayout()
         )
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .White
         collectionView.isScrollEnabled = false
         collectionView.register(EmojisAndColorsCell.self, forCellWithReuseIdentifier: EmojisAndColorsCell.reuseIdentifier)
         collectionView.register(EmojisAndColorsHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: EmojisAndColorsHeaderView.reuseIdentifier)
@@ -170,6 +182,8 @@ final class ConfigureTrackerViewController: UIViewController {
         
         addTapGestureToHideKeyboard()
         checkButtonActivation()
+        
+        setupTrackerForEditIfNeed()
     }
     
     //MARK: - Actions
@@ -183,7 +197,8 @@ final class ConfigureTrackerViewController: UIViewController {
         guard let selectedEmoji = selectedEmoji else { return }
         guard let selectedColor = selectedColor else { return }
         
-        if isRepeat {
+        switch typeOfTracker {
+        case .habit:
             addTracker(
                 title: textField.text ?? "",
                 categoryTitle: categoryTitle,
@@ -191,8 +206,7 @@ final class ConfigureTrackerViewController: UIViewController {
                 emoji: selectedEmoji,
                 color: selectedColor
             )
-            
-        } else {
+        case .irregularEvent:
             let currentDate = Date()
             let currentWeekday = Calendar.current.component(.weekday, from: currentDate)
             let newSchedule = Schedule(value: Weekday(rawValue: currentWeekday) ?? .sunday, isOn: true)
@@ -206,6 +220,11 @@ final class ConfigureTrackerViewController: UIViewController {
                 emoji: selectedEmoji,
                 color: selectedColor
             )
+            
+        case .edit:
+            print("")
+            
+        default: break
         }
         
         
@@ -219,20 +238,42 @@ final class ConfigureTrackerViewController: UIViewController {
     //MARK: - Private Functions
     
     private func setupNavBar(){
-        if isRepeat {
+        switch typeOfTracker {
+        case .habit:
             navigationItem.title = NSLocalizedString("newHabit.title", comment: "")
-//            navigationItem.title = "Новая привычка"
-        } else {
+            
+        case .irregularEvent:
             navigationItem.title = NSLocalizedString("newIrregular.title", comment: "")
-//            navigationItem.title = "Новое нерегулярное событие"
+            
+        case .edit:
+            //            navigationItem.title = NSLocalizedString("newIrregular.title", comment: "")
+            navigationItem.title = "Редактирование привычки"
+            
+        default: break
         }
     }
     
     private func setupConstraints() {
-        if isRepeat {
+        switch typeOfTracker {
+        case .habit:
             tableView.heightAnchor.constraint(equalToConstant: 150).isActive = true
-        } else {
+            
+        case .irregularEvent:
             tableView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+            
+        case .edit:
+            if let editTracker = editTracker {
+                if editTracker.schedule.isEmpty {
+                    tableView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+                } else {
+                    tableView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+                }
+            } else {
+                tableView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+            }
+            
+        default:
+            tableView.heightAnchor.constraint(equalToConstant: 150).isActive = true
         }
         
         NSLayoutConstraint.activate([
@@ -273,22 +314,45 @@ final class ConfigureTrackerViewController: UIViewController {
     private func checkButtonActivation() {
         let isAvailable: Bool
         
-        if(isRepeat) {
+        switch typeOfTracker {
+        case .habit:
             isAvailable = !selectedSchedule.isEmpty &&
             selectedTrackerCategory != nil &&
             selectedEmoji != nil &&
             selectedColor != nil
-        } else {
+            
+        case .irregularEvent:
             isAvailable = selectedTrackerCategory != nil &&
             selectedEmoji != nil &&
             selectedColor != nil
+            
+        case .edit:
+            isAvailable = true
+            
+        default:
+            isAvailable = true
         }
+        
         createButton.isEnabled = isAvailable
         
         if isAvailable {
             createButton.backgroundColor = .Black
         } else {
             createButton.backgroundColor = .Gray
+        }
+    }
+    
+    private func setupTrackerForEditIfNeed() {
+        if let editTracker = editTracker {
+            textField.text = editTracker.title
+            
+            if let editCategory = editCategory {
+                didSelectCategory(editCategory)
+            }
+            updateScheduleInfo(editTracker.schedule, [:])
+            
+            selectedEmoji = editTracker.emoji
+            selectedColor = editTracker.color
         }
     }
     
@@ -312,7 +376,8 @@ final class ConfigureTrackerViewController: UIViewController {
             title: title,
             color: color,
             emoji: emoji,
-            schedule: schedule
+            schedule: schedule,
+            isPinned: false
         )
         
         do {
@@ -331,9 +396,25 @@ final class ConfigureTrackerViewController: UIViewController {
 
 extension ConfigureTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isRepeat {
+        switch typeOfTracker {
+        case .habit:
             return 2
-        } else {
+            
+        case .irregularEvent:
+            return 1
+            
+        case .edit:
+            if let editTracker = editTracker {
+                if editTracker.schedule.isEmpty {
+                    return 1
+                } else {
+                    return 2
+                }
+            } else {
+                return 1
+            }
+            
+        default:
             return 1
         }
     }
@@ -343,11 +424,24 @@ extension ConfigureTrackerViewController: UITableViewDataSource {
         cell.accessoryType = .disclosureIndicator
         cell.backgroundColor = .LightGray.withAlphaComponent(0.3)
         if indexPath.row == 0 {
-            
-            if isRepeat {
+            switch typeOfTracker {
+            case .habit:
                 cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+                
+            case .irregularEvent:
+                cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+                
+            case .edit:
+                if let editTracker = editTracker {
+                    if editTracker.schedule.isEmpty {
+                        cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+                    } else {
+                        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+                    }
+                }
+                
+            default: break
             }
-            else { cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)}
             
             cell.titleLabel.text = titlesForTableView[indexPath.row]
         } else {
@@ -388,7 +482,7 @@ extension ConfigureTrackerViewController: ScheduleViewControllerDelegate {
         let subText: String
         if selectedDays.count == Weekday.allCases.count {
             subText = NSLocalizedString("everyDay.text", comment: "")
-//            subText = "Каждый день"
+            //            subText = "Каждый день"
         } else {
             subText = selectedDays.map { $0.shortValue }.joined(separator: ", ")
         }
@@ -472,7 +566,7 @@ extension ConfigureTrackerViewController: UICollectionViewDataSource {
             view.titleLabel.text = "Emoji"
         case CollectionViewSections.colorSection.rawValue:
             view.titleLabel.text = NSLocalizedString("color.title", comment: "")
-//            view.titleLabel.text = "Цвет"
+            //            view.titleLabel.text = "Цвет"
         default:
             return UICollectionReusableView()
         }

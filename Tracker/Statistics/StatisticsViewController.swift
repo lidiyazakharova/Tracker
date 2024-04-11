@@ -70,7 +70,8 @@ final class StatisticsViewController: UIViewController {
     
     private func fetchStatistics() throws {
         do {
-            completedTrackers = try trackerRecordStore.fetchRecords()//метод??
+            completedTrackers = try trackerRecordStore.fetchAllRecords()
+            
             getStatisticsCalculation()
         } catch {
             print("Fetch tracker record failed")
