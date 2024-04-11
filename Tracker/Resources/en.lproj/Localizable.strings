@@ -14,6 +14,7 @@
 
 "statistics.title" = "Statistics";
 "emptyStatistics.text" = "There is nothing to analyze yet";
+"getStatisticsCalculation.text" = "Trackers completed";
 
 
 // MARK: - TrackersViewController
@@ -73,6 +74,7 @@
 "newTrackerName.placeholder" = "Enter the name of the tracker";
 "newHabit.title" = "New habit";
 "newIrregular.title" = "New irregular event";
+"editTracker.title" = "Habit editing";
 "everyDay.text" = "Every day";
 "color.title" = "Color";
 
@@ -84,3 +86,11 @@
 "editAction.title" = "Edit";
 "deleteAction.title" = "Delete";
 
+
+// MARK: - FiltersViewController
+
+"filters.title" = "Filters";
+"filter.all" = "Все трекеры";
+"filter.today" = "Трекеры на сегодня";
+"filter.completed" = "Завершенные";
+"filter.uncompleted" = "Незавершенные";

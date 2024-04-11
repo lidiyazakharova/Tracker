@@ -16,7 +16,6 @@ final class EmptyStatisticsPlaceholderView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = NSLocalizedString("emptyStatistics.text", comment: "")
-//        label.text = "Анализировать пока нечего"
         label.numberOfLines = 0
         label.textColor = .Black
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)

@@ -36,7 +36,6 @@ final class ScheduleViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.setTitle(NSLocalizedString("doneButton.text", comment: ""), for: .normal)
-//        button.setTitle("Готово", for: .normal)
         button.setTitleColor(.White, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
@@ -68,7 +67,6 @@ final class ScheduleViewController: UIViewController {
     
     private func setupNavBar(){
         navigationItem.title = NSLocalizedString("schedule.title", comment: "")
-//        navigationItem.title = "Расписание"
     }
     
     private func setupView() {

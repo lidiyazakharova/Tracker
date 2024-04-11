@@ -16,7 +16,6 @@ final class StatisticsViewController: UIViewController {
     private lazy var titleHeader: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString("statistics.title", comment: "")
-//        label.text = "Cтатистика"
         label.textColor = .Black
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -84,7 +83,7 @@ final class StatisticsViewController: UIViewController {
         } else {
             statistics = [
                 Statistics(
-                    title: "Трекеров завершено", //перевод
+                    title: NSLocalizedString("getStatisticsCalculation.text", comment: ""),
                     count: "\(completedTrackers.count)")
             ]
         }

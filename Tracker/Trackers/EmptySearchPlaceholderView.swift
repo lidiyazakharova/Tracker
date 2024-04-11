@@ -17,7 +17,6 @@ final class EmptySearchPlaceholderView: UIView {
        let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.text = NSLocalizedString("emptySearch.text", comment: "")
-//        textLabel.text = "Ничего не найдено"
         textLabel.numberOfLines = 0
         textLabel.textColor = .Black
         textLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)

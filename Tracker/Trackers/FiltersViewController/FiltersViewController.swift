@@ -16,7 +16,7 @@ final class FiltersViewController: UIViewController {
     
     private lazy var filterLabel: UILabel = {
         let trackerLabel = UILabel()
-        trackerLabel.text = "Фильтры" //to do
+        trackerLabel.text = NSLocalizedString("filters.title", comment: "")
         trackerLabel.textColor = .Black
         trackerLabel.font = .systemFont(ofSize: 16, weight: .medium)
         trackerLabel.translatesAutoresizingMaskIntoConstraints = false

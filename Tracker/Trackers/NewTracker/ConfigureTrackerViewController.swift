@@ -15,11 +15,11 @@ final class ConfigureTrackerViewController: UIViewController {
     
     //MARK: - Properties
     
-    //    var isRepeat: Bool = false
+
     var delegate: ConfigureTrackerViewControllerDelegate?
     
     let titlesForTableView = [NSLocalizedString("category.title", comment: ""),NSLocalizedString("schedule.title", comment: "")]
-    //    let titlesForTableView = ["Категория", "Расписание"]
+   
     
     var emojis = [
         "🙂", "😻", "🌺", "🐶", "❤️", "😱",
@@ -58,7 +58,6 @@ final class ConfigureTrackerViewController: UIViewController {
         textField.layer.masksToBounds = true
         textField.font = UIFont.systemFont(ofSize: 17)
         textField.placeholder = NSLocalizedString("newTrackerName.placeholder", comment: "")
-        //        textField.placeholder = "Введите название трекера"
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .done
         textField.enablesReturnKeyAutomatically = true
@@ -97,7 +96,6 @@ final class ConfigureTrackerViewController: UIViewController {
         cancelButton.layer.cornerRadius = 16
         cancelButton.layer.masksToBounds = true
         cancelButton.setTitle(NSLocalizedString("cancelButton.text", comment: ""), for: .normal)
-        //        cancelButton.setTitle("Отменить", for: .normal)
         cancelButton.setTitleColor(.Red, for: .normal)
         cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         cancelButton.layer.borderWidth = 1
@@ -112,7 +110,6 @@ final class ConfigureTrackerViewController: UIViewController {
         createButton.layer.cornerRadius = 16
         createButton.layer.masksToBounds = true
         createButton.setTitle(NSLocalizedString("createButton.text", comment: ""), for: .normal)
-        //        createButton.setTitle("Создать", for: .normal)
         createButton.setTitleColor(.White, for: .normal)
         createButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
@@ -246,8 +243,7 @@ final class ConfigureTrackerViewController: UIViewController {
             navigationItem.title = NSLocalizedString("newIrregular.title", comment: "")
             
         case .edit:
-            //            navigationItem.title = NSLocalizedString("newIrregular.title", comment: "")
-            navigationItem.title = "Редактирование привычки"
+            navigationItem.title = NSLocalizedString("editTracker.title", comment: "")
             
         default: break
         }
@@ -482,7 +478,6 @@ extension ConfigureTrackerViewController: ScheduleViewControllerDelegate {
         let subText: String
         if selectedDays.count == Weekday.allCases.count {
             subText = NSLocalizedString("everyDay.text", comment: "")
-            //            subText = "Каждый день"
         } else {
             subText = selectedDays.map { $0.shortValue }.joined(separator: ", ")
         }
@@ -566,7 +561,6 @@ extension ConfigureTrackerViewController: UICollectionViewDataSource {
             view.titleLabel.text = "Emoji"
         case CollectionViewSections.colorSection.rawValue:
             view.titleLabel.text = NSLocalizedString("color.title", comment: "")
-            //            view.titleLabel.text = "Цвет"
         default:
             return UICollectionReusableView()
         }

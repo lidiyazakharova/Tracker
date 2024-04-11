@@ -75,7 +75,6 @@ final class TrackersViewController: UIViewController {
         
         let attributedPlaceholder = NSAttributedString(
             string: NSLocalizedString("searchTextField.placeholder", comment: ""),
-            //            string: "Поиск",
             attributes: attributes)
         textField.attributedPlaceholder = attributedPlaceholder
         textField.delegate = self
@@ -86,7 +85,6 @@ final class TrackersViewController: UIViewController {
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle(NSLocalizedString("cancelButton.text", comment: ""), for: .normal)
-        //        button.setTitle("Отменить", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .Blue
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
@@ -327,30 +325,12 @@ final class TrackersViewController: UIViewController {
             if trackers.isEmpty { return nil }
             return TrackerCategory(title: category.title, trackers: trackers)
         }
-    } //to do
+    }
     
     private func reloadFilteredCategories(text: String?, date: Date) {
         let calendar = Calendar.current
         let filteredWeekDay = calendar.component(.weekday, from: date)
         let filterText = (text ?? "").lowercased()
-        
-//        filteredCategories = categories.compactMap { category in
-//            let trackers = category.trackers.filter { tracker in
-//                let textCondition = filterText.isEmpty || tracker.title.lowercased().contains(filterText)
-//                
-//                let dateCondition = tracker.schedule.contains(where: { weekDay in
-//                    weekDay.rawValue == filteredWeekDay
-//                }) == true || tracker.schedule.isEmpty
-//                
-//                return textCondition && dateCondition
-//            }
-//            
-//            if trackers.isEmpty {
-//                return nil
-//            }
-//            
-//            return TrackerCategory(title: category.title, trackers: trackers)
-//        }
         
         switch selectedFilter {
         case .all:

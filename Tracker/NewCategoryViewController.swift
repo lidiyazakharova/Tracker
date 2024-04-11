@@ -33,7 +33,6 @@ final class NewCategoryViewController: UIViewController {
         textField.layer.masksToBounds = true
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         textField.placeholder = NSLocalizedString("newCategoryTextField.placeholder", comment: "")
-//        textField.placeholder = "Введите название категории"
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .done
         textField.enablesReturnKeyAutomatically = true
@@ -49,7 +48,6 @@ final class NewCategoryViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.setTitle(NSLocalizedString("doneButton.text", comment: ""), for: .normal)
-//        button.setTitle("Готово", for: .normal)
         button.setTitleColor(.White, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(pushDoneButton), for: .touchUpInside)
@@ -89,7 +87,6 @@ final class NewCategoryViewController: UIViewController {
     
     private func setupNavBar() {
         navigationItem.title = NSLocalizedString("newCategory.title", comment: "")
-//        navigationItem.title = "Новая категория"
     }
     
     private func setupView() {
@@ -115,12 +112,6 @@ final class NewCategoryViewController: UIViewController {
         ])
     }
     
-//    private func editCategory() {
-//        if typeOfCategory == .edit {
-//            nameCategoryTextField.text = editingCategoryName
-//            categoryLabel.text = "Редактирование категории"
-//        }
-//    }
 }
 
 // MARK: - UITextFieldDelegate
@@ -151,7 +142,6 @@ extension NewCategoryViewController: UITextFieldDelegate {
             
         } else if typeOfCategory == .edit {
             guard let editingCategoryName = editingCategoryName else { return }
-//            trackerCategoryStore.updateCategory(categoryName: editingCategoryName, with: categoryName)
             delegate?.reloadCategories()
         }
         dismiss(animated: true)

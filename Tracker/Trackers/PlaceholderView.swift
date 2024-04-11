@@ -17,7 +17,6 @@ final class PlaceholderView: UIView {
         let questionLabel = UILabel()
         questionLabel.translatesAutoresizingMaskIntoConstraints = false
         questionLabel.text = NSLocalizedString("emptyState.text", comment: "")
-        //       questionLabel.text = "Что будем отслеживать?"
         questionLabel.numberOfLines = 0
         questionLabel.textColor = .Black
         questionLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
