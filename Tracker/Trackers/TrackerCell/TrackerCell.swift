@@ -24,7 +24,7 @@ final class TrackerCell: UICollectionViewCell {
     
     private let emojiLabel: UILabel = {
         let label = UILabel()
-        label.backgroundColor = .White.withAlphaComponent(0.3)
+        label.backgroundColor = .white.withAlphaComponent(0.3)
         label.clipsToBounds = true
         label.layer.cornerRadius = 24 / 2
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -35,7 +35,7 @@ final class TrackerCell: UICollectionViewCell {
     
     private let taskTitleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .White
+        label.textColor = .white
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false

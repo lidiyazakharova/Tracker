@@ -11,8 +11,8 @@ final class TabBarController: UITabBarController {
     
     //MARK: - Private Functions
     private func addSeparator() {
-        let separator = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 1))
-        separator.backgroundColor = .Gray
+        let separator = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 0.5))
+        separator.backgroundColor = .Separator
         tabBar.addSubview(separator)
     }
     

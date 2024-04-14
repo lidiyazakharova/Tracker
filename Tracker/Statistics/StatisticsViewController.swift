@@ -43,7 +43,6 @@ final class StatisticsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureStatisticScreen()
-        try? fetchStatistics()
         emptyStatisticsPlaceholderView.configureEmptyStatisticsPlaceholder()
         checkEmptyStatistics()
     }

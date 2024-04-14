@@ -47,10 +47,6 @@ final class FiltersViewController: UIViewController {
         tableView.dataSource = self
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-    }
-    
     //MARK: - Private methods
     private func addViews() {
         view.backgroundColor = .White

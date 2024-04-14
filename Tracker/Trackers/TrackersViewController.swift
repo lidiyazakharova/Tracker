@@ -27,7 +27,6 @@ final class TrackersViewController: UIViewController {
     private let titleHeader: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString("trackers.title", comment: "")
-        //        label.text = "Трекеры"
         label.textColor = .Black
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -163,10 +162,13 @@ final class TrackersViewController: UIViewController {
         addTapGestureToHideKeyboard()
         
         trackerStore.setDelegate(self)
+        datePicker.setValue(UIColor.black, forKeyPath: "textColor")
+
     }
     
     
     //MARK: - Functions
+    
     private func configureView() {
         view.backgroundColor = .White
         searchTextField.returnKeyType = .done
@@ -461,7 +463,7 @@ final class TrackersViewController: UIViewController {
         
         if !pinnedTrackers.isEmpty {
             let pinnedCategory = TrackerCategory(
-                title: NSLocalizedString("pinnedTrackers", comment: "Pinned"),
+                title: NSLocalizedString("pinnedTrackers.title", comment: ""),
                 trackers: pinnedTrackers)
             categories.insert(pinnedCategory, at: 0)
         }
@@ -743,7 +745,7 @@ extension TrackersViewController {
         configureTrackerViewController.daysCount = daysCount
         configureTrackerViewController.editCategory = category
         configureTrackerViewController.editTracker = tracker
-        configureTrackerViewController.delegate = self
+//        configureTrackerViewController.delegate = self
         
         let navigationController = UINavigationController(rootViewController: configureTrackerViewController)
         present(navigationController, animated: true)
@@ -802,13 +804,5 @@ extension TrackersViewController {
         alert.addAction(deleteButton)
         alert.addAction(cencelButton)
         self.present(alert, animated: true)
-    }
-}
-
-// MARK: - Extension ConfigureTrackerViewControllerDelegate
-extension TrackersViewController: ConfigureTrackerViewControllerDelegate {
-    
-    func trackerDidSaved() {
-            //todo
     }
 }

@@ -26,6 +26,7 @@
 "emptySearch.text" = "Nothing was found";
 "unpinTracker.text" = "Unpin";
 "pinTracker.text" = "Pin";
+"pinnedTrackers.title" = "Pinned";
 "edit.text" = "Edit";
 "delete.text" = "Delete";
 "filterButton.text" = "Filters";

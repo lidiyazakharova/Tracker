@@ -24,6 +24,7 @@
 "emptySearch.text" = "Ничего не найдено";
 "unpinTracker.text" = "Открепить";
 "pinTracker.text" = "Закрепить";
+"pinnedTrackers.title" = "Закрепленные";
 "edit.text" = "Редактировать";
 "delete.text" = "Удалить";
 "filterButton.text" = "Фильтры";
