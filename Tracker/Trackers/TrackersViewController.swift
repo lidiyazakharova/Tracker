@@ -45,6 +45,7 @@ final class TrackersViewController: UIViewController {
         picker.backgroundColor = .BackgroundDate
         picker.tintColor = .Blue
         picker.contentHorizontalAlignment = .center
+        picker.textColor = UIColor.BlackAnyAppearance
         
         picker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         return picker
@@ -162,7 +163,7 @@ final class TrackersViewController: UIViewController {
         addTapGestureToHideKeyboard()
         
         trackerStore.setDelegate(self)
-        datePicker.setValue(UIColor.black, forKeyPath: "textColor")
+        datePicker.setValue(UIColor.BlackAnyAppearance, forKeyPath: "textColor")
 
     }
     
@@ -529,69 +530,69 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
         return cell
     }
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
-    ) -> UITargetedPreview? {
-        guard let indexPath = configuration.identifier as? IndexPath,
-              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
-        
-        let view = cell.mainView
-        return UITargetedPreview(view: view)
-    }
+//    func collectionView(
+//        _ collectionView: UICollectionView,
+//        previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
+//    ) -> UITargetedPreview? {
+//        guard let indexPath = configuration.identifier as? IndexPath,
+//              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
+//        
+//        let view = cell.mainView
+//        return UITargetedPreview(view: view)
+//    }
+//    
+//    func collectionView(
+//        _ collectionView: UICollectionView,
+//        previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
+//    ) -> UITargetedPreview? {
+//        guard let indexPath = configuration.identifier as? IndexPath,
+//              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
+//        
+//        let view = cell.mainView
+//        return UITargetedPreview(view: view)
+//    }
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
-    ) -> UITargetedPreview? {
-        guard let indexPath = configuration.identifier as? IndexPath,
-              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
-        
-        let view = cell.mainView
-        return UITargetedPreview(view: view)
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        contextMenuConfigurationForItemAt indexPath: IndexPath,
-        point: CGPoint
-    ) -> UIContextMenuConfiguration? {
-        let tracker = filteredCategories[indexPath.section].trackers[indexPath.row]
-        let category = filteredCategories[indexPath.section]
-        
-        let unpinTracker = NSLocalizedString("unpinTracker.text", comment: "")
-        let pinTracker = NSLocalizedString("pinTracker.text", comment: "")
-        
-        let titleTextIsPinned = tracker.isPinned ? unpinTracker : pinTracker
-        
-        let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions in
-            
-            let pinTracker = UIAction(title: titleTextIsPinned) { [weak self] _ in
-                guard let self = self else { return }
-                try? self.pinTracker(tracker)
-            }
-            
-            let editTracker = UIAction(
-                title: NSLocalizedString("edit.text", comment: "")) { [weak self] _ in
-                    guard let self = self else { return }
-                    self.editingTrackers(category: category, tracker: tracker)
-                    self.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "edit"])
-                }
-            
-            let deleteTracker = UIAction(
-                title: NSLocalizedString("delete.text", comment: " "),
-                image: nil,
-                identifier: nil,
-                discoverabilityTitle: nil,
-                attributes: .destructive) {[weak self] _ in
-                    guard let self = self else { return }
-                    self.showDeleteAlert(indexPath: indexPath)
-                    self.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "delete"])
-                }
-            return  UIMenu(children: [pinTracker, editTracker, deleteTracker])
-        }
-        return configuration
-    }
+//    func collectionView(
+//        _ collectionView: UICollectionView,
+//        contextMenuConfigurationForItemAt indexPath: IndexPath,
+//        point: CGPoint
+//    ) -> UIContextMenuConfiguration? {
+//        let tracker = filteredCategories[indexPath.section].trackers[indexPath.row]
+//        let category = filteredCategories[indexPath.section]
+//        
+//        let unpinTracker = NSLocalizedString("unpinTracker.text", comment: "")
+//        let pinTracker = NSLocalizedString("pinTracker.text", comment: "")
+//        
+//        let titleTextIsPinned = tracker.isPinned ? unpinTracker : pinTracker
+//        
+//        let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions in
+//            
+//            let pinTracker = UIAction(title: titleTextIsPinned) { [weak self] _ in
+//                guard let self = self else { return }
+//                try? self.pinTracker(tracker)
+//            }
+//            
+//            let editTracker = UIAction(
+//                title: NSLocalizedString("edit.text", comment: "")) { [weak self] _ in
+//                    guard let self = self else { return }
+//                    self.editingTrackers(category: category, tracker: tracker)
+//                    self.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "edit"])
+//                }
+//            
+//            let deleteTracker = UIAction(
+//                title: NSLocalizedString("delete.text", comment: " "),
+//                image: nil,
+//                identifier: nil,
+//                discoverabilityTitle: nil,
+//                attributes: .destructive) {[weak self] _ in
+//                    guard let self = self else { return }
+//                    self.showDeleteAlert(indexPath: indexPath)
+//                    self.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "delete"])
+//                }
+//            return  UIMenu(children: [pinTracker, editTracker, deleteTracker])
+//        }
+//        return configuration
+//    }
     
     
     private func isTrackerCompletedToday(id: UUID) -> Bool {
@@ -612,6 +613,19 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
 
 // MARK: - TrackersViewCellDelegate
 extension TrackersViewController: TrackerCellDelegate {
+    
+    func updateTrackerPinAction(tracker: Tracker) {
+        try? self.pinTracker(tracker)
+    }
+    
+    func editTrackerAction(tracker: Tracker) {
+        self.editingTrackers(tracker: tracker)
+    }
+    
+    func deleteTrackerAction(tracker: Tracker) {
+        self.showDeleteAlert(tracker: tracker)
+    }
+    
     
     func completedTracker(id: UUID, at indexPath: IndexPath) {
         guard currentDate <= Date() else {
@@ -655,8 +669,7 @@ extension TrackersViewController: TrackerCellDelegate {
         }
     }
     
-    private func deleteTrackerInCategory(atIndex index: IndexPath) throws {
-        let tracker = filteredCategories[index.section].trackers[index.row]
+    private func deleteTrackerInCategory(tracker: Tracker) throws {
         do {
             trackerStore.deleteTrackers(tracker: tracker)
             try trackerRecordStore.deleteAllRecordForID(for: tracker.id)
@@ -738,12 +751,11 @@ extension TrackersViewController: TrackerStoreDelegate {
 
 // MARK: - Extension Edit tracker
 extension TrackersViewController {
-    private func editingTrackers(category: TrackerCategory, tracker: Tracker) {
+    private func editingTrackers(tracker: Tracker) {
         let daysCount = completedTrackers.filter { $0.trackerID == tracker.id }.count
         let configureTrackerViewController = ConfigureTrackerViewController()
         configureTrackerViewController.typeOfTracker = .edit
         configureTrackerViewController.daysCount = daysCount
-        configureTrackerViewController.editCategory = category
         configureTrackerViewController.editTracker = tracker
 //        configureTrackerViewController.delegate = self
         
@@ -781,7 +793,7 @@ extension TrackersViewController: FiltersViewControllerDelegate {
 
 // MARK: - Extension Alert
 extension TrackersViewController {
-    private func showDeleteAlert(indexPath: IndexPath) {
+    private func showDeleteAlert(tracker: Tracker) {
         let alert = UIAlertController(
             title: nil,
             message: NSLocalizedString("showDeleteAlert.text", comment: ""),
@@ -792,7 +804,7 @@ extension TrackersViewController {
             style: .destructive) { [weak self] _ in
                 guard let self = self else { return }
                 do {
-                    try self.deleteTrackerInCategory(atIndex: indexPath)
+                    try self.deleteTrackerInCategory(tracker: tracker)
                 } catch {
                     print("Error deleting tracker: \(error)")
                 }
@@ -806,3 +818,16 @@ extension TrackersViewController {
         self.present(alert, animated: true)
     }
 }
+
+extension UIDatePicker {
+
+     var textColor: UIColor? {
+         set {
+              setValue(newValue, forKeyPath: "textColor")
+             }
+         get {
+              return value(forKeyPath: "textColor") as? UIColor
+             }
+     }
+}
+

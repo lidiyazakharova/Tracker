@@ -4,11 +4,19 @@ import UIKit
 protocol TrackerCellDelegate: AnyObject {
     func completedTracker(id: UUID, at indexPath: IndexPath)
     func uncompletedTracker(id: UUID, at indexPath: IndexPath)
+    func updateTrackerPinAction(tracker: Tracker)
+    func editTrackerAction(tracker: Tracker)
+    func deleteTrackerAction(tracker: Tracker)
 }
 
 //MARK: - TrackerCell
 
 final class TrackerCell: UICollectionViewCell {
+//    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+//        <#code#>
+//    }
+
+    
     static let identifier = "taskCellIdentifier"
     weak var delegate: TrackerCellDelegate?
     let pointSize = UIImage.SymbolConfiguration(pointSize: 11)
@@ -81,6 +89,8 @@ final class TrackerCell: UICollectionViewCell {
     private var isCompletedToday: Bool = false
     private var trackerID: UUID?
     private var indexPath: IndexPath?
+    private var tracker: Tracker?
+    private var trackerCompletedDaysCount: Int = 0
     
     //MARK: - Actions
     @objc private func trackButtonTapped() {
@@ -104,12 +114,15 @@ final class TrackerCell: UICollectionViewCell {
         completedDays: Int,
         indexPath: IndexPath
     ) {
+        self.tracker = tracker
         self.trackerID = tracker.id
         self.isCompletedToday = isCompletedToday
         self.indexPath = indexPath
+        self.trackerCompletedDaysCount = completedDays
         
         let color = tracker.color
         addElements()
+        configureContextMenu()
         setupConstraints()
         
         mainView.backgroundColor = color
@@ -189,4 +202,44 @@ final class TrackerCell: UICollectionViewCell {
         return daysCounter
     }
     
+    private func configureContextMenu() {
+        let contextMenu = UIContextMenuInteraction(delegate: self)
+        mainView.addInteraction(contextMenu)
+    }
+    
 }
+
+extension TrackerCell: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        
+        let unpinTracker = NSLocalizedString("unpinTracker.text", comment: "")
+        let pinTracker = NSLocalizedString("pinTracker.text", comment: "")
+        
+        let titleTextIsPinned = (self.tracker?.isPinned ?? false) ? unpinTracker : pinTracker
+        
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider:  { suggestedActions in
+
+            let pinAction = UIAction(title: titleTextIsPinned) { action in
+                guard let tracker = self.tracker else { return }
+                
+                self.delegate?.updateTrackerPinAction(tracker: tracker)
+            }
+
+            let editAction = UIAction(title: "Редактировать") { action in
+                guard let tracker = self.tracker else { return }
+                
+                self.delegate?.editTrackerAction(tracker: tracker)
+            }
+
+            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { action in
+                guard let tracker = self.tracker else { return }
+                
+                self.delegate?.deleteTrackerAction(tracker: tracker)
+            }
+
+            return UIMenu(children: [pinAction, editAction, deleteAction])
+        })
+    }
+}
+

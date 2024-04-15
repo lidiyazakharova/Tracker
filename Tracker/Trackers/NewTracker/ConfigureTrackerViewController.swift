@@ -39,13 +39,12 @@ final class ConfigureTrackerViewController: UIViewController {
     var selectedEmojiIndex: Int?
     var selectedColor: UIColor?
     var selectedColorIndex: Int?
-    
     var typeOfTracker: TypeOfTracker?
-    var editCategory: TrackerCategory?
     var editTracker: Tracker?
     var daysCount: Int?
     
     private let trackerStore = TrackerStore.shared
+    private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore.shared
     private var selectedSchedule: [Weekday] = []
     private var switchStates: [Int: Bool] = [:]
     private var selectedTrackerCategory: TrackerCategory?
@@ -342,12 +341,8 @@ final class ConfigureTrackerViewController: UIViewController {
         if let editTracker = editTracker {
             textField.text = editTracker.title
             
-            if let editCategory = editCategory {
-                didSelectCategory(editCategory)
-            }
-            updateScheduleInfo(editTracker.schedule, [:])
-            
             selectedEmoji = editTracker.emoji
+            
             selectedColor = editTracker.color
         }
     }
@@ -440,9 +435,32 @@ extension ConfigureTrackerViewController: UITableViewDataSource {
             }
             
             cell.titleLabel.text = titlesForTableView[indexPath.row]
+            
+            if let editTracker = editTracker {
+                textField.text = editTracker.title
+                if let category = try? findCategoryByTracker(tracker: editTracker) {
+                    self.selectedTrackerCategory = category
+                    
+                    cell.set(subText: category.title)
+                }
+            }
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
             cell.titleLabel.text = titlesForTableView[indexPath.row]
+            
+            if let editTracker = editTracker {
+                self.selectedSchedule = editTracker.schedule
+                
+                let subText: String
+                if editTracker.schedule.count == Weekday.allCases.count {
+                    subText = NSLocalizedString("everyDay.text", comment: "")
+                } else {
+                    subText = editTracker.schedule.map { $0.shortValue }.joined(separator: ", ")
+                }
+                
+                cell.set(subText: subText)
+                
+            }
         }
         return cell
     }
@@ -533,9 +551,20 @@ extension ConfigureTrackerViewController: UICollectionViewDataSource {
         case CollectionViewSections.emojiSection.rawValue:
             let emoji = emojis[indexPath.row]
             cell.titleLabel.text = emoji
+            
+            if emoji == selectedEmoji {
+                setEmojiHighlight(indexPath, collectionView, cell)
+            }
+            
+            
         case CollectionViewSections.colorSection.rawValue:
             let color = colors[indexPath.row]
             cell.titleLabel.backgroundColor = color
+            
+            if color == selectedColor {
+                setColorHighlight(indexPath, collectionView, cell)
+            }
+            
         default:
             break
         }
@@ -631,8 +660,8 @@ extension ConfigureTrackerViewController: UICollectionViewDelegateFlowLayout {
         checkButtonActivation()
     }
     
-    func setEmojiHighlight(_ indexPath: IndexPath, _ collectionView: UICollectionView) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? EmojisAndColorsCell else { return }
+    func setEmojiHighlight(_ indexPath: IndexPath, _ collectionView: UICollectionView, _ existsCell: EmojisAndColorsCell? = nil) {
+        guard let cell = existsCell ?? collectionView.cellForItem(at: indexPath) as? EmojisAndColorsCell else { return }
         cell.layer.cornerRadius = 16
         cell.layer.masksToBounds = true
         cell.backgroundColor = .LightGray
@@ -640,13 +669,25 @@ extension ConfigureTrackerViewController: UICollectionViewDelegateFlowLayout {
         selectedEmojiIndex = indexPath.row
     }
     
-    func setColorHighlight(_ indexPath: IndexPath, _ collectionView: UICollectionView) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? EmojisAndColorsCell else { return }
+    func setColorHighlight(_ indexPath: IndexPath, _ collectionView: UICollectionView, _ existsCell: EmojisAndColorsCell? = nil) {
+        guard let cell = existsCell ?? collectionView.cellForItem(at: indexPath) as? EmojisAndColorsCell else { return }
         cell.layer.cornerRadius = 8
         cell.layer.masksToBounds = true
         cell.layer.borderColor = colors[indexPath.row].cgColor.copy(alpha: 0.3)
         cell.layer.borderWidth = 3
         selectedColor = colors[indexPath.row]
         selectedColorIndex = indexPath.row
+    }
+}
+
+
+// MARK: - Core Data
+extension ConfigureTrackerViewController {
+    
+    func findCategoryByTracker(tracker: Tracker) throws -> TrackerCategory? {
+        try trackerCategoryStore.getCategories()
+            .first(where: {category in
+                category.trackers.contains(where: { $0.id == tracker.id})
+            })
     }
 }
