@@ -51,6 +51,7 @@ final class ConfigureTrackerViewController: UIViewController {
     private var selectedTrackerCategory: TrackerCategory?
     private var category: String = ""
     private let uiColorMarshalling = UIColorMarshalling()
+    private var isEditTrackerInited = false
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
@@ -563,18 +564,21 @@ extension ConfigureTrackerViewController: UITableViewDataSource {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
             cell.titleLabel.text = titlesForTableView[indexPath.row]
             
-            if let editTracker = editTracker {
-                self.selectedSchedule = editTracker.schedule
-                
-                let subText: String
-                if editTracker.schedule.count == Weekday.allCases.count {
-                    subText = NSLocalizedString("everyDay.text", comment: "")
-                } else {
-                    subText = editTracker.schedule.map { $0.shortValue }.joined(separator: ", ")
+            if !isEditTrackerInited {
+                if let editTracker = editTracker {
+                    self.selectedSchedule = editTracker.schedule
+                    
+                    let subText: String
+                    if editTracker.schedule.count == Weekday.allCases.count {
+                        subText = NSLocalizedString("everyDay.text", comment: "")
+                    } else {
+                        subText = editTracker.schedule.map { $0.shortValue }.joined(separator: ", ")
+                    }
+                    
+                    cell.set(subText: subText)
                 }
                 
-                cell.set(subText: subText)
-                
+                isEditTrackerInited = true
             }
         }
         return cell
