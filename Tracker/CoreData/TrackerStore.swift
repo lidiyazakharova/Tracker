@@ -10,8 +10,6 @@ private enum TrackerStoreError: Error {
     case decodingErrorInvalidID
 }
 
-
-
 // MARK: - Protocols
 
 protocol TrackerStoreDelegate: AnyObject {

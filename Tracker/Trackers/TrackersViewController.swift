@@ -275,11 +275,6 @@ final class TrackersViewController: UIViewController {
             datePicker.widthAnchor.constraint(equalToConstant: 77),
             datePicker.heightAnchor.constraint(equalToConstant: 34),
             
-            //            datePicker.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
-            //            datePicker.centerYAnchor.constraint(equalTo: plusButton.centerYAnchor),
-            //            datePicker.widthAnchor.constraint(equalToConstant: 104),
-            //            datePicker.heightAnchor.constraint(equalToConstant: 34),
-            
             searchStackView.topAnchor.constraint(equalTo: titleHeader.bottomAnchor, constant: 7),
             searchStackView.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -10),
             searchStackView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
@@ -575,71 +570,6 @@ extension TrackersViewController: UICollectionViewDelegate, UICollectionViewData
         return cell
     }
     
-    //    func collectionView(
-    //        _ collectionView: UICollectionView,
-    //        previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
-    //    ) -> UITargetedPreview? {
-    //        guard let indexPath = configuration.identifier as? IndexPath,
-    //              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
-    //
-    //        let view = cell.mainView
-    //        return UITargetedPreview(view: view)
-    //    }
-    //
-    //    func collectionView(
-    //        _ collectionView: UICollectionView,
-    //        previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
-    //    ) -> UITargetedPreview? {
-    //        guard let indexPath = configuration.identifier as? IndexPath,
-    //              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
-    //
-    //        let view = cell.mainView
-    //        return UITargetedPreview(view: view)
-    //    }
-    
-    //    func collectionView(
-    //        _ collectionView: UICollectionView,
-    //        contextMenuConfigurationForItemAt indexPath: IndexPath,
-    //        point: CGPoint
-    //    ) -> UIContextMenuConfiguration? {
-    //        let tracker = filteredCategories[indexPath.section].trackers[indexPath.row]
-    //        let category = filteredCategories[indexPath.section]
-    //
-    //        let unpinTracker = NSLocalizedString("unpinTracker.text", comment: "")
-    //        let pinTracker = NSLocalizedString("pinTracker.text", comment: "")
-    //
-    //        let titleTextIsPinned = tracker.isPinned ? unpinTracker : pinTracker
-    //
-    //        let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions in
-    //
-    //            let pinTracker = UIAction(title: titleTextIsPinned) { [weak self] _ in
-    //                guard let self = self else { return }
-    //                try? self.pinTracker(tracker)
-    //            }
-    //
-    //            let editTracker = UIAction(
-    //                title: NSLocalizedString("edit.text", comment: "")) { [weak self] _ in
-    //                    guard let self = self else { return }
-    //                    self.editingTrackers(category: category, tracker: tracker)
-    //                    self.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "edit"])
-    //                }
-    //
-    //            let deleteTracker = UIAction(
-    //                title: NSLocalizedString("delete.text", comment: " "),
-    //                image: nil,
-    //                identifier: nil,
-    //                discoverabilityTitle: nil,
-    //                attributes: .destructive) {[weak self] _ in
-    //                    guard let self = self else { return }
-    //                    self.showDeleteAlert(indexPath: indexPath)
-    //                    self.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "delete"])
-    //                }
-    //            return  UIMenu(children: [pinTracker, editTracker, deleteTracker])
-    //        }
-    //        return configuration
-    //    }
-    
-    
     private func isTrackerCompletedToday(id: UUID) -> Bool {
         completedTrackers.contains {
             isMatchRecord(model: $0, with: id)
@@ -694,10 +624,6 @@ extension TrackersViewController: TrackerCellDelegate {
             try trackerRecordStore.deleteRecord(with: id, by: currentDate)
             
             completedTrackers.removeAll { trackerRecord in
-                //                isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
-                //                let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: currentDate)
-                //                return trackerRecord.trackerID == id && isSameDay
-                
                 return isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
             }
             collectionView.reloadItems(at: [indexPath])
@@ -767,12 +693,8 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+// MARK: - ddTrackerViewControllerDelegate
 extension TrackersViewController: AddTrackerViewControllerDelegate {
-    //    func updateTracker(tracker: Tracker) {
-    //       print("update")
-    //        reloadData()
-    //        collectionView.reloadData()
-    //    }
     
     func trackerDidCreate() {
         reloadData()
@@ -789,7 +711,6 @@ extension TrackersViewController: TrackersViewControllerDelegate {
         collectionView.reloadData()
     }
 }
-
 
 // MARK: - TrackerStoreDelegate
 
@@ -842,7 +763,6 @@ extension TrackersViewController: FiltersViewControllerDelegate {
         reloadFilteredCategories(text: searchTextField.text, date: currentDate)
     }
 }
-
 
 // MARK: - Extension Alert
 extension TrackersViewController {

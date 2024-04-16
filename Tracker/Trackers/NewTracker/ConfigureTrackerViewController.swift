@@ -16,11 +16,11 @@ final class ConfigureTrackerViewController: UIViewController {
     
     //MARK: - Properties
     
-
+    
     var delegate: ConfigureTrackerViewControllerDelegate?
     
     let titlesForTableView = [NSLocalizedString("category.title", comment: ""),NSLocalizedString("schedule.title", comment: "")]
-   
+    
     
     var emojis = [
         "🙂", "😻", "🌺", "🐶", "❤️", "😱",
@@ -112,7 +112,7 @@ final class ConfigureTrackerViewController: UIViewController {
         createButton.translatesAutoresizingMaskIntoConstraints = false
         createButton.layer.cornerRadius = 16
         createButton.layer.masksToBounds = true
-//        createButton.setTitle(NSLocalizedString("createButton.text", comment: ""), for: .normal)
+        //        createButton.setTitle(NSLocalizedString("createButton.text", comment: ""), for: .normal)
         createButton.setTitleColor(.White, for: .normal)
         createButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
@@ -155,7 +155,7 @@ final class ConfigureTrackerViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
+    
     private var contentSize: CGSize {
         CGSize(width: view.frame.width, height: view.frame.height + 200)
     }
@@ -216,7 +216,6 @@ final class ConfigureTrackerViewController: UIViewController {
                 emoji: selectedEmoji,
                 color: selectedColor
             )
-//            createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
             
         case .irregularEvent:
             let currentDate = Date()
@@ -233,30 +232,11 @@ final class ConfigureTrackerViewController: UIViewController {
                 color: selectedColor
             )
             
-//            createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
-            
         case .edit:
-//            guard
-//                let daysCount = daysCount,
-//                let editTracker = editTracker
-////                let editCategory = editCategory
-//            else { return }
-//            completedDaysLabel.isHidden = false
-//            completedDaysLabel.text = formatDaysText(forDays: daysCount ?? 0)
-//            createButton.setTitle("Сохранить", for: .normal)
-//            createButton.addTarget(self, action: #selector(didTapSaveButton), for: .touchUpInside)
-//            createSchedule(schedule: editTracker.schedule)
             saveTracker()
-//                title: textField.text ?? "",
-//                categoryTitle: categoryTitle,
-//                schedule: editTracker.schedule,
-//                emoji: selectedEmoji,
-//                color: selectedColor
-//            )
             
         default: break
         }
-        
         
         dismiss(animated: true, completion: { self.delegate?.trackerDidSaved() })
     }
@@ -313,82 +293,78 @@ final class ConfigureTrackerViewController: UIViewController {
         
         switch typeOfTracker {
         case .habit, .irregularEvent:
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            NSLayoutConstraint.activate([
+                scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+                scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                
+                contentView.widthAnchor.constraint(equalTo: view.widthAnchor),
+                contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+                
+                textField.heightAnchor.constraint(equalToConstant: 75),
+                textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+                textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+                textField.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 24),
+                
+                tableView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
+                tableView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
+                tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
+                
+                emojisAndColorsCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
+                emojisAndColorsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                emojisAndColorsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+                emojisAndColorsCollectionView.heightAnchor.constraint(equalToConstant: 460),
+                
+                stackView.heightAnchor.constraint(equalToConstant: 60),
+                stackView.topAnchor.constraint(equalTo: emojisAndColorsCollectionView.bottomAnchor, constant: 16),
+                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+                stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -24)
+                
+            ])
             
-            contentView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            
-            textField.heightAnchor.constraint(equalToConstant: 75),
-            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            textField.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 24),
-            
-            tableView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
-            
-            emojisAndColorsCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
-            emojisAndColorsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            emojisAndColorsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            emojisAndColorsCollectionView.heightAnchor.constraint(equalToConstant: 460),
-            
-            stackView.heightAnchor.constraint(equalToConstant: 60),
-            stackView.topAnchor.constraint(equalTo: emojisAndColorsCollectionView.bottomAnchor, constant: 16),
-            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -24)
-            
-//            completedDaysLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
-//            completedDaysLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-//            completedDaysLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-//            completedDaysLabel.heightAnchor.constraint(equalToConstant: 38)
-        ])
-        
         case .edit:
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            contentView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            
-            textField.heightAnchor.constraint(equalToConstant: 75),
-            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            textField.topAnchor.constraint(equalTo: completedDaysLabel.bottomAnchor, constant: 40),
-            
-            tableView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
-            
-            emojisAndColorsCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
-            emojisAndColorsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            emojisAndColorsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            emojisAndColorsCollectionView.heightAnchor.constraint(equalToConstant: 460),
-            
-            stackView.heightAnchor.constraint(equalToConstant: 60),
-            stackView.topAnchor.constraint(equalTo: emojisAndColorsCollectionView.bottomAnchor, constant: 16),
-            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -24),
-            
-            completedDaysLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
-            completedDaysLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            completedDaysLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            completedDaysLabel.heightAnchor.constraint(equalToConstant: 38)
-        ])
+            NSLayoutConstraint.activate([
+                scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+                scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                
+                contentView.widthAnchor.constraint(equalTo: view.widthAnchor),
+                contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+                
+                textField.heightAnchor.constraint(equalToConstant: 75),
+                textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+                textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+                textField.topAnchor.constraint(equalTo: completedDaysLabel.bottomAnchor, constant: 40),
+                
+                tableView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
+                tableView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
+                tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
+                
+                emojisAndColorsCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
+                emojisAndColorsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                emojisAndColorsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+                emojisAndColorsCollectionView.heightAnchor.constraint(equalToConstant: 460),
+                
+                stackView.heightAnchor.constraint(equalToConstant: 60),
+                stackView.topAnchor.constraint(equalTo: emojisAndColorsCollectionView.bottomAnchor, constant: 16),
+                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+                stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -24),
+                
+                completedDaysLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
+                completedDaysLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                completedDaysLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                completedDaysLabel.heightAnchor.constraint(equalToConstant: 38)
+            ])
         default: break
         }
     }
@@ -487,15 +463,12 @@ final class ConfigureTrackerViewController: UIViewController {
         
         self.view.window?.rootViewController?.dismiss(animated: true)
     }
-
-
-        
+    
     private func formatDaysText(forDays days: Int) -> String {
         String.localizedStringWithFormat(NSLocalizedString("numberOfDays", comment: "numberOfDays"), days)
         
     }
 }
-
 
 // MARK: - UITableViewDataSource,Delegate
 
@@ -805,7 +778,6 @@ extension ConfigureTrackerViewController: UICollectionViewDelegateFlowLayout {
         selectedColorIndex = indexPath.row
     }
 }
-
 
 // MARK: - Core Data
 extension ConfigureTrackerViewController {
