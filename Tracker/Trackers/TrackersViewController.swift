@@ -52,6 +52,27 @@ final class TrackersViewController: UIViewController {
         return picker
     }()
     
+    private lazy var dateLabel: UILabel = {
+            let dateLabel = UILabel()
+            dateLabel.translatesAutoresizingMaskIntoConstraints = false
+            dateLabel.text = dateFormatter.string(from: Date())
+            dateLabel.backgroundColor = .BackgroundDate
+            dateLabel.textColor = .Black
+            dateLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+            dateLabel.textAlignment = NSTextAlignment.center
+            dateLabel.heightAnchor.constraint(equalToConstant: 34).isActive = true
+            dateLabel.widthAnchor.constraint(equalToConstant: 77).isActive = true
+            dateLabel.layer.cornerRadius = 8
+            dateLabel.layer.masksToBounds = true
+            return dateLabel
+        }()
+    
+    private lazy var dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd.MM.YY"
+            return formatter
+        }()
+    
     private let searchStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
