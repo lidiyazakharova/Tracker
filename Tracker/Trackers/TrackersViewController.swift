@@ -3,6 +3,7 @@ import CloudKit
 
 protocol TrackersViewControllerDelegate: AnyObject {
     func createdTracker(tracker: Tracker, categoryTitle: String)
+    func updateTracker(tracker: Tracker)
 }
 
 final class TrackersViewController: UIViewController {
@@ -721,6 +722,12 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension TrackersViewController: AddTrackerViewControllerDelegate {
+//    func updateTracker(tracker: Tracker) {
+//       print("update")
+//        reloadData()
+//        collectionView.reloadData()
+//    }
+    
     func trackerDidCreate() {
         reloadData()
         collectionView.reloadData()
@@ -757,7 +764,7 @@ extension TrackersViewController {
         configureTrackerViewController.typeOfTracker = .edit
         configureTrackerViewController.daysCount = daysCount
         configureTrackerViewController.editTracker = tracker
-//        configureTrackerViewController.delegate = self
+        configureTrackerViewController.delegate = self
         
         let navigationController = UINavigationController(rootViewController: configureTrackerViewController)
         present(navigationController, animated: true)
@@ -829,5 +836,20 @@ extension UIDatePicker {
               return value(forKeyPath: "textColor") as? UIColor
              }
      }
+}
+
+//MARK: - ConfigureViewControllerDelegate
+extension TrackersViewController: ConfigureTrackerViewControllerDelegate {
+    func trackerDidSaved() {
+       print("save")
+    }
+    
+    func updateTracker(tracker: Tracker) {
+        print("Updated")
+        
+        try? trackerStore.updateTracker(tracker)
+        try? fetchCategories()
+        reloadFilteredCategories(text: searchTextField.text, date: currentDate)
+    }
 }
 

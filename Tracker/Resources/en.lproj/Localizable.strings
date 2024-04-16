@@ -73,6 +73,7 @@
 // MARK: - ConfigureTrackerViewController
 
 "createButton.text" = "Create";
+"save.text" = "Save";
 "newTrackerName.placeholder" = "Enter the name of the tracker";
 "newHabit.title" = "New habit";
 "newIrregular.title" = "New irregular event";

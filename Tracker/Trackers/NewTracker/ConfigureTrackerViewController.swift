@@ -9,6 +9,7 @@ enum TypeOfTracker {
 
 protocol ConfigureTrackerViewControllerDelegate {
     func trackerDidSaved()
+    func updateTracker(tracker: Tracker)
 }
 
 final class ConfigureTrackerViewController: UIViewController {
@@ -48,6 +49,7 @@ final class ConfigureTrackerViewController: UIViewController {
     private var selectedSchedule: [Weekday] = []
     private var switchStates: [Int: Bool] = [:]
     private var selectedTrackerCategory: TrackerCategory?
+    private var category: String = ""
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
@@ -108,7 +110,7 @@ final class ConfigureTrackerViewController: UIViewController {
         createButton.translatesAutoresizingMaskIntoConstraints = false
         createButton.layer.cornerRadius = 16
         createButton.layer.masksToBounds = true
-        createButton.setTitle(NSLocalizedString("createButton.text", comment: ""), for: .normal)
+//        createButton.setTitle(NSLocalizedString("createButton.text", comment: ""), for: .normal)
         createButton.setTitleColor(.White, for: .normal)
         createButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
@@ -143,6 +145,15 @@ final class ConfigureTrackerViewController: UIViewController {
         return contentView
     }()
     
+    private lazy var completedDaysLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.isHidden = true
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
     private var contentSize: CGSize {
         CGSize(width: view.frame.width, height: view.frame.height + 200)
     }
@@ -163,7 +174,8 @@ final class ConfigureTrackerViewController: UIViewController {
         [textField,
          tableView,
          emojisAndColorsCollectionView,
-         stackView
+         stackView,
+         completedDaysLabel
         ].forEach { scrollView.addSubview($0) }
         
         stackView.addArrangedSubview(cancelButton)
@@ -202,6 +214,8 @@ final class ConfigureTrackerViewController: UIViewController {
                 emoji: selectedEmoji,
                 color: selectedColor
             )
+//            createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
+            
         case .irregularEvent:
             let currentDate = Date()
             let currentWeekday = Calendar.current.component(.weekday, from: currentDate)
@@ -217,8 +231,26 @@ final class ConfigureTrackerViewController: UIViewController {
                 color: selectedColor
             )
             
+//            createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
+            
         case .edit:
-            print("")
+//            guard
+//                let daysCount = daysCount,
+//                let editTracker = editTracker
+////                let editCategory = editCategory
+//            else { return }
+//            completedDaysLabel.isHidden = false
+//            completedDaysLabel.text = formatDaysText(forDays: daysCount ?? 0)
+//            createButton.setTitle("Сохранить", for: .normal)
+//            createButton.addTarget(self, action: #selector(didTapSaveButton), for: .touchUpInside)
+//            createSchedule(schedule: editTracker.schedule)
+            saveTracker()
+//                title: textField.text ?? "",
+//                categoryTitle: categoryTitle,
+//                schedule: editTracker.schedule,
+//                emoji: selectedEmoji,
+//                color: selectedColor
+//            )
             
         default: break
         }
@@ -251,12 +283,18 @@ final class ConfigureTrackerViewController: UIViewController {
     private func setupConstraints() {
         switch typeOfTracker {
         case .habit:
+            createButton.setTitle(NSLocalizedString("createButton.text", comment: ""), for: .normal)
             tableView.heightAnchor.constraint(equalToConstant: 150).isActive = true
             
         case .irregularEvent:
+            createButton.setTitle(NSLocalizedString("createButton.text", comment: ""), for: .normal)
             tableView.heightAnchor.constraint(equalToConstant: 75).isActive = true
             
         case .edit:
+            createButton.setTitle(NSLocalizedString("save.text", comment: ""), for: .normal)
+            completedDaysLabel.isHidden = false
+            completedDaysLabel.text = formatDaysText(forDays: daysCount ?? 0)
+            
             if let editTracker = editTracker {
                 if editTracker.schedule.isEmpty {
                     tableView.heightAnchor.constraint(equalToConstant: 75).isActive = true
@@ -271,6 +309,8 @@ final class ConfigureTrackerViewController: UIViewController {
             tableView.heightAnchor.constraint(equalToConstant: 150).isActive = true
         }
         
+        switch typeOfTracker {
+        case .habit, .irregularEvent:
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -302,8 +342,53 @@ final class ConfigureTrackerViewController: UIViewController {
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -24)
+            
+//            completedDaysLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
+//            completedDaysLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+//            completedDaysLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+//            completedDaysLabel.heightAnchor.constraint(equalToConstant: 38)
         ])
         
+        case .edit:
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            contentView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            
+            textField.heightAnchor.constraint(equalToConstant: 75),
+            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            textField.topAnchor.constraint(equalTo: completedDaysLabel.bottomAnchor, constant: 40),
+            
+            tableView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
+            tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
+            
+            emojisAndColorsCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
+            emojisAndColorsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            emojisAndColorsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            emojisAndColorsCollectionView.heightAnchor.constraint(equalToConstant: 460),
+            
+            stackView.heightAnchor.constraint(equalToConstant: 60),
+            stackView.topAnchor.constraint(equalTo: emojisAndColorsCollectionView.bottomAnchor, constant: 16),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -24),
+            
+            completedDaysLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
+            completedDaysLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            completedDaysLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            completedDaysLabel.heightAnchor.constraint(equalToConstant: 38)
+        ])
+        default: break
+        }
     }
     
     private func checkButtonActivation() {
@@ -379,6 +464,30 @@ final class ConfigureTrackerViewController: UIViewController {
         } catch {
             print("Save tracker failed")
         }
+    }
+    
+    private func saveTracker() {
+        guard let editTracker = editTracker else { return }
+        guard let trackerName = textField.text else { return }
+        
+        let newTracker = Tracker(
+            id: editTracker.id,
+            title: trackerName,
+            color: selectedColor ?? UIColor.ColorSelection1,
+            emoji: selectedEmoji ?? "",
+            schedule: selectedSchedule,
+            isPinned: editTracker.isPinned)
+        
+        delegate?.updateTracker(tracker: newTracker)
+        
+        self.view.window?.rootViewController?.dismiss(animated: true)
+    }
+
+
+        
+    private func formatDaysText(forDays days: Int) -> String {
+        String.localizedStringWithFormat(NSLocalizedString("numberOfDays", comment: "numberOfDays"), days)
+        
     }
 }
 
@@ -560,10 +669,11 @@ extension ConfigureTrackerViewController: UICollectionViewDataSource {
         case CollectionViewSections.colorSection.rawValue:
             let color = colors[indexPath.row]
             cell.titleLabel.backgroundColor = color
+            print("color \(color)")
+            print("SC \(selectedColor)")
             
-            if color == selectedColor {
-                setColorHighlight(indexPath, collectionView, cell)
-            }
+            setColorHighlight(indexPath, collectionView, cell)
+        
             
         default:
             break

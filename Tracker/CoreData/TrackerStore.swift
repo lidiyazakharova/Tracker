@@ -24,6 +24,7 @@ protocol TrackerStoreProtocol {
     func fetchTracker(_ trackerCoreData: TrackerCoreData) throws -> Tracker
     func addTracker(_ tracker: Tracker, toCategory category: TrackerCategory) throws
     func deleteTrackers(tracker: Tracker)
+    func updateTracker(_ tracker: Tracker) throws
 }
 
 // MARK: - TrackerStore
@@ -130,8 +131,24 @@ final class TrackerStore: NSObject {
         }
     }
     
+    func updateTracker(with tracker: Tracker) throws {
+        let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        fetchRequest.predicate = NSPredicate(format: "idTracker == %@", tracker.id as CVarArg)
+        do {
+            let existingTrackers = try context.fetch(fetchRequest)
+            
+            if let existingTracker = existingTrackers.first {
+                existingTracker.idTracker = tracker.id
+                existingTracker.title = tracker.title
+                existingTracker.color = uiColorMarshalling.hexString(from: tracker.color)
+                existingTracker.emoji = tracker.emoji
+                existingTracker.schedule = Weekday.calculateScheduleValue(for: tracker.schedule)
+                existingTracker.isPinned = tracker.isPinned
+                try saveContext()
+            }
+        }
+    }
 }
-
 // MARK: - NSFetchedResultsControllerDelegate
 
 extension TrackerStore: NSFetchedResultsControllerDelegate {
@@ -188,6 +205,10 @@ extension TrackerStore: TrackerStoreProtocol {
         try addTracker(tracker, to: category)
     }
     
+    func updateTracker(_ tracker: Tracker) throws {
+        try updateTracker(with: tracker)
+    }
+    
     func pinTrackerCoreData(_ tracker: Tracker) throws {
         let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         fetchRequest.predicate = NSPredicate(format: "idTracker == %@", tracker.id as CVarArg)
@@ -203,7 +224,7 @@ extension TrackerStore: TrackerStoreProtocol {
                 try context.save()
             }
         } catch {
-           print("Pin tracker Failed")
+            print("Pin tracker Failed")
         }
     }
     
