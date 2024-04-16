@@ -26,11 +26,10 @@ final class PlaceholderView: UIView {
     
     //MARK: - Functions
     func configureEmptyTrackerPlaceholder() {
-        
         addSubview(questionLabel)
         addSubview(emptyTrackersImage)
-        translatesAutoresizingMaskIntoConstraints = false
         
+        translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             questionLabel.topAnchor.constraint(equalTo: emptyTrackersImage.bottomAnchor, constant: 8),

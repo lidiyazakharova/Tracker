@@ -104,7 +104,6 @@ final class TrackersViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .Blue
         button.layer.cornerRadius = 16
-        button.isHidden = true
         button.addTarget(self, action: #selector(didTapFilterButton), for: .touchUpInside)
         return button
     }()
@@ -432,13 +431,19 @@ final class TrackersViewController: UIViewController {
         
         collectionView.reloadData()
         reloadPlaceholder()
-        emptySearchPlaceholderView.isHidden = !filteredCategories.isEmpty || (searchTextField.text ?? "").isEmpty
-        filterButton.isHidden = filteredCategories.isEmpty
     }
     
     private func reloadPlaceholder() {
-        let isVisible = filteredCategories.isEmpty && (searchTextField.text ?? "").isEmpty
-        placeholderView.isHidden = !isVisible
+        let isPlaceholderVisible = filteredCategories.isEmpty && (searchTextField.text ?? "").isEmpty &&
+            selectedFilter == .all
+        
+        placeholderView.isHidden = !isPlaceholderVisible
+        
+        let isEmptySearchVisible = filteredCategories.isEmpty &&
+            (!(searchTextField.text ?? "").isEmpty ||
+            selectedFilter != .all)
+        
+        emptySearchPlaceholderView.isHidden = !isEmptySearchVisible
     }
     
     private func addTapGestureToHideKeyboard() {
