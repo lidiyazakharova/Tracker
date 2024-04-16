@@ -60,6 +60,21 @@ final class TrackerRecordStore: NSObject {
         return records
     }
     
+    func fetchRecordsByTrackerId(_ trackerId: UUID) throws -> [TrackerRecord] {
+        let request = TrackerRecordCoreData.fetchRequest()
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(
+            format: "%K = %@",
+            #keyPath(TrackerRecordCoreData.trackerID), trackerId as CVarArg
+        )
+        let objects = try context.fetch(request)
+        let records = objects.compactMap { object -> TrackerRecord? in
+            guard let date = object.date, let id = object.trackerID else { return nil }
+            return TrackerRecord(trackerID: id, date: date)
+        }
+        return records
+    }
+    
     func fetchAllRecords() throws -> [TrackerRecord] {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             print("fetchAllRecords error")
@@ -142,11 +157,23 @@ extension TrackerRecordStore: TrackerRecordStoreProtocol {
     }
     
     func addRecord(with id: UUID, by date: Date) throws {
-        try createNewRecord(id: id, date: date)
+        guard let onlyDate = date.onlyDate else {
+            print("Failed: addRecord")
+            
+            return
+        }
+        
+        try createNewRecord(id: id, date: onlyDate)
     }
     
     func deleteRecord(with id: UUID, by date: Date) throws {
-        try removeRecord(idTracker: id, date: date)
+        guard let onlyDate = date.onlyDate else {
+            print("Failed: deleteRecord")
+            
+            return
+        }
+        
+        try removeRecord(idTracker: id, date: onlyDate)
     }
     
     func deleteAllRecordForID(for id: UUID) throws {

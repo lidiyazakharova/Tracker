@@ -655,13 +655,15 @@ extension TrackersViewController: TrackerCellDelegate {
             try trackerRecordStore.deleteRecord(with: id, by: currentDate)
             
             completedTrackers.removeAll { trackerRecord in
-                isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
-                let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: currentDate)
-                return trackerRecord.trackerID == id && isSameDay
+//                isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
+//                let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: currentDate)
+//                return trackerRecord.trackerID == id && isSameDay
+                
+                return isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
             }
             collectionView.reloadItems(at: [indexPath])
         } catch {
-            print("Remove task failed")
+            print("Remove task failed: \(error)")
         }
     }
     

@@ -12,10 +12,6 @@ protocol TrackerCellDelegate: AnyObject {
 //MARK: - TrackerCell
 
 final class TrackerCell: UICollectionViewCell {
-//    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-//        <#code#>
-//    }
-
     
     static let identifier = "taskCellIdentifier"
     weak var delegate: TrackerCellDelegate?
