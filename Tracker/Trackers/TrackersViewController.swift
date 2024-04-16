@@ -438,6 +438,7 @@ final class TrackersViewController: UIViewController {
             selectedFilter == .all
         
         placeholderView.isHidden = !isPlaceholderVisible
+        filterButton.isHidden = isPlaceholderVisible
         
         let isEmptySearchVisible = filteredCategories.isEmpty &&
             (!(searchTextField.text ?? "").isEmpty ||
