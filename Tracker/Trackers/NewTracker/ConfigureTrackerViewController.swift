@@ -50,6 +50,7 @@ final class ConfigureTrackerViewController: UIViewController {
     private var switchStates: [Int: Bool] = [:]
     private var selectedTrackerCategory: TrackerCategory?
     private var category: String = ""
+    private let uiColorMarshalling = UIColorMarshalling()
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
@@ -669,11 +670,16 @@ extension ConfigureTrackerViewController: UICollectionViewDataSource {
         case CollectionViewSections.colorSection.rawValue:
             let color = colors[indexPath.row]
             cell.titleLabel.backgroundColor = color
-            print("color \(color)")
-            print("SC \(selectedColor)")
             
-            setColorHighlight(indexPath, collectionView, cell)
-        
+            let cellColor = uiColorMarshalling.hexString(from: color)
+            
+            if let editTrackerColor = editTracker?.color {
+                let selectedColor = uiColorMarshalling.hexString(from: editTrackerColor)
+                
+                if cellColor == selectedColor {
+                    setColorHighlight(indexPath, collectionView, cell)
+                }
+            }
             
         default:
             break
