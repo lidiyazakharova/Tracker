@@ -24,7 +24,7 @@ protocol TrackerStoreProtocol {
     func fetchTracker(_ trackerCoreData: TrackerCoreData) throws -> Tracker
     func addTracker(_ tracker: Tracker, toCategory category: TrackerCategory) throws
     func deleteTrackers(tracker: Tracker)
-    func updateTracker(_ tracker: Tracker) throws
+    func updateTracker(_ tracker: Tracker, to category: TrackerCategory) throws
 }
 
 // MARK: - TrackerStore
@@ -131,7 +131,7 @@ final class TrackerStore: NSObject {
         }
     }
     
-    func updateTracker(with tracker: Tracker) throws {
+    func updateTracker(with tracker: Tracker, to category: TrackerCategory) throws {
         let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         fetchRequest.predicate = NSPredicate(format: "idTracker == %@", tracker.id as CVarArg)
         do {
@@ -205,8 +205,8 @@ extension TrackerStore: TrackerStoreProtocol {
         try addTracker(tracker, to: category)
     }
     
-    func updateTracker(_ tracker: Tracker) throws {
-        try updateTracker(with: tracker)
+    func updateTracker(_ tracker: Tracker, to category: TrackerCategory) throws {
+        try updateTracker(with: tracker, to: category)
     }
     
     func pinTrackerCoreData(_ tracker: Tracker) throws {

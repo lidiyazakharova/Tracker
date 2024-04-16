@@ -3,7 +3,7 @@ import CloudKit
 
 protocol TrackersViewControllerDelegate: AnyObject {
     func createdTracker(tracker: Tracker, categoryTitle: String)
-    func updateTracker(tracker: Tracker)
+    func updateTracker(tracker: Tracker, to category: TrackerCategory)
 }
 
 final class TrackersViewController: UIViewController {
@@ -852,10 +852,10 @@ extension TrackersViewController: ConfigureTrackerViewControllerDelegate {
        print("save")
     }
     
-    func updateTracker(tracker: Tracker) {
+    func updateTracker(tracker: Tracker, to category: TrackerCategory) {
         print("Updated")
         
-        try? trackerStore.updateTracker(tracker)
+        try? trackerStore.updateTracker(tracker, to: category)
         try? fetchCategories()
         reloadFilteredCategories(text: searchTextField.text, date: currentDate)
     }

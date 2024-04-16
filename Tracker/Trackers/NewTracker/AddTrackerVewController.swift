@@ -101,8 +101,8 @@ final class AddTrackerViewController: UIViewController {
 //MARK: - ConfigureTrackerViewControllerDelegate
 
 extension AddTrackerViewController: ConfigureTrackerViewControllerDelegate {
-    func updateTracker(tracker: Tracker) {
-        print ("10")
+    func updateTracker(tracker: Tracker, to category: TrackerCategory) {
+        //.
     }
     
     func trackerDidSaved() {

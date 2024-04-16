@@ -9,7 +9,7 @@ enum TypeOfTracker {
 
 protocol ConfigureTrackerViewControllerDelegate {
     func trackerDidSaved()
-    func updateTracker(tracker: Tracker)
+    func updateTracker(tracker: Tracker, to category: TrackerCategory)
 }
 
 final class ConfigureTrackerViewController: UIViewController {
@@ -470,6 +470,9 @@ final class ConfigureTrackerViewController: UIViewController {
     private func saveTracker() {
         guard let editTracker = editTracker else { return }
         guard let trackerName = textField.text else { return }
+        guard let selectedTrackerCategory = selectedTrackerCategory else {
+            return
+        }
         
         let newTracker = Tracker(
             id: editTracker.id,
@@ -479,7 +482,7 @@ final class ConfigureTrackerViewController: UIViewController {
             schedule: selectedSchedule,
             isPinned: editTracker.isPinned)
         
-        delegate?.updateTracker(tracker: newTracker)
+        delegate?.updateTracker(tracker: newTracker, to: selectedTrackerCategory)
         
         self.view.window?.rootViewController?.dismiss(animated: true)
     }
@@ -546,12 +549,14 @@ extension ConfigureTrackerViewController: UITableViewDataSource {
             
             cell.titleLabel.text = titlesForTableView[indexPath.row]
             
-            if let editTracker = editTracker {
-                textField.text = editTracker.title
-                if let category = try? findCategoryByTracker(tracker: editTracker) {
-                    self.selectedTrackerCategory = category
-                    
-                    cell.set(subText: category.title)
+            if selectedTrackerCategory == nil {
+                if let editTracker = editTracker {
+                    textField.text = editTracker.title
+                    if let category = try? findCategoryByTracker(tracker: editTracker) {
+                        self.selectedTrackerCategory = category
+                        
+                        cell.set(subText: category.title)
+                    }
                 }
             }
         } else {
@@ -587,6 +592,7 @@ extension ConfigureTrackerViewController: UITableViewDelegate {
             let categoryViewController = CategoryViewController()
             categoryViewController.delegate = self
             navigationController?.pushViewController(categoryViewController, animated: true)
+            
         } else if indexPath.row == 1 {
             let scheduleViewController = ScheduleViewController()
             scheduleViewController.delegate = self
