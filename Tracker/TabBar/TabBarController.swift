@@ -11,22 +11,22 @@ final class TabBarController: UITabBarController {
     
     //MARK: - Private Functions
     private func addSeparator() {
-        let separator = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 1))
-        separator.backgroundColor = .Gray
+        let separator = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 0.5))
+        separator.backgroundColor = .Separator
         tabBar.addSubview(separator)
     }
     
     private func generateTabBar() {
         let trackersViewController = TrackersViewController()
         trackersViewController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: NSLocalizedString("tabBarTrackers.title", comment: ""),
             image: UIImage(named: "Trackers"),
             selectedImage: nil
         )
         
         let statisticsViewController = StatisticsViewController()
         statisticsViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: NSLocalizedString("tabBarStatistics.title", comment: ""),
             image: UIImage(named: "Statistics"),
             selectedImage: nil
         )

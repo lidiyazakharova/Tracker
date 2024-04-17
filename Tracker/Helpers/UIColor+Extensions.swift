@@ -10,6 +10,7 @@ extension UIColor {
     static var LightGray: UIColor { UIColor(named: "LightGray") ?? UIColor.lightGray }
     static var BackgroundDate: UIColor { UIColor(named: "BackgroundDate") ?? UIColor.lightGray }
     static var BlackAnyAppearance: UIColor { UIColor(named: "BlackAnyAppearance") ?? UIColor.black }
+    static var Separator: UIColor { UIColor(named: "Separator") ?? UIColor.gray }
     
     
     static var ColorSelection1: UIColor { UIColor(named: "ColorSelection1") ?? UIColor.red }

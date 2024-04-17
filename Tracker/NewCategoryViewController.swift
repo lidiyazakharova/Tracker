@@ -1,8 +1,27 @@
 import UIKit
 
+//MARK: - TypeOfCategory
+enum TypeOfCategory {
+    case create
+    case edit
+}
+
+//MARK: - NewCategoryViewControllerDelegate
+protocol NewCategoryViewControllerDelegate: AnyObject {
+    func addNewCategories(category: String)
+    func reloadCategories()
+}
+
+
 final class NewCategoryViewController: UIViewController {
     
+    
+    weak var delegate: NewCategoryViewControllerDelegate?
+    var editingCategoryName: String?
+    var typeOfCategory: TypeOfCategory?
+    
     private let trackerCategoryStore: TrackerCategoryStoreProtocol = TrackerCategoryStore.shared
+    private var categoryName: String = ""
     
     // MARK: - Private Properties
     
@@ -13,7 +32,7 @@ final class NewCategoryViewController: UIViewController {
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        textField.placeholder = "Введите название категории"
+        textField.placeholder = NSLocalizedString("newCategoryTextField.placeholder", comment: "")
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .done
         textField.enablesReturnKeyAutomatically = true
@@ -28,7 +47,7 @@ final class NewCategoryViewController: UIViewController {
         button.backgroundColor = .Black
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.setTitle("Готово", for: .normal)
+        button.setTitle(NSLocalizedString("doneButton.text", comment: ""), for: .normal)
         button.setTitleColor(.White, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(pushDoneButton), for: .touchUpInside)
@@ -67,7 +86,7 @@ final class NewCategoryViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setupNavBar() {
-        navigationItem.title = "Новая категория"
+        navigationItem.title = NSLocalizedString("newCategory.title", comment: "")
     }
     
     private func setupView() {
@@ -92,6 +111,7 @@ final class NewCategoryViewController: UIViewController {
             doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
     }
+    
 }
 
 // MARK: - UITextFieldDelegate
@@ -111,6 +131,20 @@ extension NewCategoryViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+}
+
+//MARK: - Extension
+@objc extension NewCategoryViewController {
+    func didTapCreateCategoryButton() {
+        if typeOfCategory == .create {
+            delegate?.addNewCategories(category: categoryName)
+            
+        } else if typeOfCategory == .edit {
+            guard let editingCategoryName = editingCategoryName else { return }
+            delegate?.reloadCategories()
+        }
+        dismiss(animated: true)
     }
 }
 

@@ -7,8 +7,8 @@ final class OnboardingViewController: UIPageViewController {
     // MARK: - Private Properties
     
     private lazy var pages: [OnboardingPageViewController] = [
-        OnboardingPageViewController(pageImage: "Background_1", pageText: "Отслеживайте только \n то, что хотите"),
-        OnboardingPageViewController(pageImage: "Background_2", pageText: "Даже если это \n не литры воды и йога")
+        OnboardingPageViewController(pageImage: "Background_1", pageText: NSLocalizedString("onboardingBlueLabel.title", comment: "")),
+        OnboardingPageViewController(pageImage: "Background_2", pageText:  NSLocalizedString("onboardingRedLabel.title", comment: "")),
     ]
     
     private lazy var pageControl: UIPageControl = {
@@ -28,7 +28,7 @@ final class OnboardingViewController: UIPageViewController {
         button.backgroundColor = .BlackAnyAppearance
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.setTitle(NSLocalizedString("onboardingDoneButton.text", comment: ""), for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)

@@ -4,18 +4,22 @@ import UIKit
 protocol TrackerCellDelegate: AnyObject {
     func completedTracker(id: UUID, at indexPath: IndexPath)
     func uncompletedTracker(id: UUID, at indexPath: IndexPath)
+    func updateTrackerPinAction(tracker: Tracker)
+    func editTrackerAction(tracker: Tracker)
+    func deleteTrackerAction(tracker: Tracker)
 }
 
 //MARK: - TrackerCell
 
 final class TrackerCell: UICollectionViewCell {
+    
     static let identifier = "taskCellIdentifier"
     weak var delegate: TrackerCellDelegate?
     let pointSize = UIImage.SymbolConfiguration(pointSize: 11)
     
     //MARK: - Private Properties
     
-    private let mainView: UIView = {
+    var mainView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -24,7 +28,7 @@ final class TrackerCell: UICollectionViewCell {
     
     private let emojiLabel: UILabel = {
         let label = UILabel()
-        label.backgroundColor = .White.withAlphaComponent(0.3)
+        label.backgroundColor = .white.withAlphaComponent(0.3)
         label.clipsToBounds = true
         label.layer.cornerRadius = 24 / 2
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -35,7 +39,7 @@ final class TrackerCell: UICollectionViewCell {
     
     private let taskTitleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .White
+        label.textColor = .white
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -70,9 +74,19 @@ final class TrackerCell: UICollectionViewCell {
         return button
     }()
     
+    private lazy var pinnedImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Pin")
+        imageView.isHidden = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
     private var isCompletedToday: Bool = false
     private var trackerID: UUID?
     private var indexPath: IndexPath?
+    private var tracker: Tracker?
+    private var trackerCompletedDaysCount: Int = 0
     
     //MARK: - Actions
     @objc private func trackButtonTapped() {
@@ -96,20 +110,24 @@ final class TrackerCell: UICollectionViewCell {
         completedDays: Int,
         indexPath: IndexPath
     ) {
+        self.tracker = tracker
         self.trackerID = tracker.id
         self.isCompletedToday = isCompletedToday
         self.indexPath = indexPath
+        self.trackerCompletedDaysCount = completedDays
         
         let color = tracker.color
         addElements()
+        configureContextMenu()
         setupConstraints()
         
         mainView.backgroundColor = color
         taskTitleLabel.text = tracker.title
         emojiLabel.text = tracker.emoji
         
-        let wordDay = pluralizeDays(completedDays)
-        counterDayLabel.text = "\(wordDay)"
+        pinnedImage.isHidden = !tracker.isPinned
+        
+        counterDayLabel.text = formatDaysText(forDays: completedDays)
         
         let image = isCompletedToday ? UIImage(systemName: "checkmark", withConfiguration: pointSize) : UIImage(systemName: "plus", withConfiguration: pointSize)
         plusButton.backgroundColor = color
@@ -118,12 +136,18 @@ final class TrackerCell: UICollectionViewCell {
         
     }
     
+    func updateRecord(days: Int, isCompleted: Bool) {
+        counterDayLabel.text = formatDaysText(forDays: days)
+    }
+    
     private func addElements() {
         contentView.addSubview(mainView)
         contentView.addSubview(stackView)
         
         mainView.addSubview(emojiLabel)
         mainView.addSubview(taskTitleLabel)
+        mainView.addSubview(pinnedImage)
+        
         stackView.addSubview(counterDayLabel)
         stackView.addSubview(plusButton)
         
@@ -145,6 +169,11 @@ final class TrackerCell: UICollectionViewCell {
             taskTitleLabel.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -12),
             taskTitleLabel.bottomAnchor.constraint(equalTo: mainView.bottomAnchor, constant: -12),
             
+            pinnedImage.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -4),
+            pinnedImage.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 12),
+            pinnedImage.widthAnchor.constraint(equalToConstant: 24),
+            pinnedImage.heightAnchor.constraint(equalToConstant: 24),
+            
             plusButton.widthAnchor.constraint(equalToConstant: 34),
             plusButton.heightAnchor.constraint(equalToConstant: 34),
             plusButton.topAnchor.constraint(equalTo: stackView.topAnchor, constant: 8),
@@ -160,16 +189,53 @@ final class TrackerCell: UICollectionViewCell {
         ])
     }
     
-    private func pluralizeDays(_ count: Int) -> String {
-        let remainder10 = count % 10
-        let remainder100 = count % 100
+    private func updateCounterLabelText(completedDays: Int){
+        counterDayLabel.text = formatDaysText(forDays: completedDays)
+    }
+    
+    private func formatDaysText(forDays days: Int) -> String {
+        let daysCounter = String.localizedStringWithFormat(NSLocalizedString("numberOfDays", comment: "numberOfDays"), days)
+        return daysCounter
+    }
+    
+    private func configureContextMenu() {
+        let contextMenu = UIContextMenuInteraction(delegate: self)
+        mainView.addInteraction(contextMenu)
+    }
+    
+}
+
+extension TrackerCell: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         
-        if remainder10 == 1 && remainder100 != 11 {
-            return "\(count) день"
-        } else if remainder10 >= 2 && remainder10 <= 4 && (remainder100 < 10 || remainder100 >= 20) {
-            return "\(count) дня"
-        } else {
-            return "\(count) дней"
-        }
+        let unpinTracker = NSLocalizedString("unpinTracker.text", comment: "")
+        let pinTracker = NSLocalizedString("pinTracker.text", comment: "")
+        
+        let titleTextIsPinned = (self.tracker?.isPinned ?? false) ? unpinTracker : pinTracker
+        
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider:  { suggestedActions in
+
+            let pinAction = UIAction(title: titleTextIsPinned) { action in
+                guard let tracker = self.tracker else { return }
+                
+                self.delegate?.updateTrackerPinAction(tracker: tracker)
+            }
+
+            let editAction = UIAction(title: "Редактировать") { action in
+                guard let tracker = self.tracker else { return }
+                
+                self.delegate?.editTrackerAction(tracker: tracker)
+            }
+
+            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { action in
+                guard let tracker = self.tracker else { return }
+                
+                self.delegate?.deleteTrackerAction(tracker: tracker)
+            }
+
+            return UIMenu(children: [pinAction, editAction, deleteAction])
+        })
     }
 }
+
